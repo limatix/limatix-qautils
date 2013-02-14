@@ -1,0 +1,85 @@
+#! /usr/bin/python
+# usage: QAstatement2pdf <basename.tex>
+# converts <basename.tex> to <basename>.pdf,  <basename>_<checklistname>.chx, and  <basename>_<checklistname>.pdf
+# Output file is left in the current directory
+# Intermediates are stored in /tmp
+
+import sys
+import subprocess
+import os
+import os.path
+import shutil
+import string
+
+
+scriptfile=os.path.realpath(__file__)
+scriptdir=os.path.dirname(scriptfile)
+libdir=os.path.join(scriptdir,'../lib')
+latexdir=os.path.join(scriptdir,'../latex')
+
+contextdir=os.path.abspath(os.curdir) # current directory
+tmpdir=os.tempnam(None,"QAp2pdf_") # full path of temporary directory
+
+if len(sys.argv) < 2:
+   print "usage: QAstatement2pdf <basename.tex> "
+   print " " 
+   print "converts <basename.tex> to <basename>.pdf,  <basename>_<checklistname>.chx, and  <basename>_<checklistname>.pdf"
+   print " "
+   sys.exit(1)
+   pass
+
+texfile=sys.argv[1] # relative path from current directory to tex file
+texfilename=os.path.basename(texfile) # name portion only
+texdirname=os.path.dirname(os.path.abspath(texfile))  # directory containing tex file
+basename=os.path.splitext(texfilename)[0]  # name portion only, without extension
+textmpfile=os.path.join(tmpdir,texfilename) # path of chx file copy to be placed in temporary directory
+
+os.mkdir(tmpdir)
+shutil.copyfile(texfile,textmpfile)
+
+print "source: %s, dest: %s" % (os.path.join(libdir,"chx2texml.xsl"),os.path.join(tmpdir,"chx2texml.xsl"))
+
+# copy chx2texml.xsl into temp directory so it can be found
+shutil.copyfile(os.path.join(libdir,"chx2texml.xsl"),os.path.join(tmpdir,"chx2texml.xsl"))
+
+
+
+os.chdir(tmpdir)
+
+
+# Configure latex .... 
+
+# Set TEXMFHOME to include our latex directory
+os.environ["TEXMFHOME"]="%s;%s" % (latexdir,os.path.join(latexdir,"external"))
+
+# obtain value of TEXMF so we can substitute into TEXINPUTS  # see TEXINPUTS.pdflatex in /usr/share/texlive/texmf/web2c/texmf.cnf
+
+kpsewhich=subprocess.Popen(["kpsewhich","--var-value","TEXINPUTS.pdflatex"],stdout=subprocess.PIPE)
+(PDFLATEX_TEXINPUTS,junk)=kpsewhich.communicate()
+
+while PDFLATEX_TEXINPUTS[-1].isspace():
+   PDFLATEX_TEXINPUTS=PDFLATEX_TEXINPUTS[1:-1]
+   pass
+
+
+# Configure TEXINPUTS to include source directory and result of TEXMFHOME
+
+os.environ["TEXINPUTS"]=".;%s;%s" % (texdirname,PDFLATEX_TEXINPUTS)
+
+print "TEXINPUTS=" + os.environ["TEXINPUTS"]
+
+pdffile=basename+".pdf"
+subprocess.call(["pdflatex","--shell-escape",texfilename])
+subprocess.call(["pdflatex","--shell-escape",texfilename])
+subprocess.call(["pdflatex","--shell-escape",texfilename])
+
+# shutil.copyfile(pdffile,os.path.join(contextdir,pdffile))
+
+outfiles=os.listdir(tmpdir)
+for name in outfiles:
+   if (name.endswith(".pdf") and not name.endswith("-pics.pdf")) or name.endswith(".chx"):
+      shutil.copyfile(name,os.path.join(contextdir,name))
+      pass
+   pass
+
+os.chdir(contextdir)

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>  <!-- This is a recommended, but optional header that specifies that this file is written in XML -->
+
+<!-- Example of how to write a .chx checklist file.  -->
+<!-- ==============================================  -->
+
+<!-- These are XML comments, which are ignored. -->
+
+<!-- In order to trigger automatic display when viewed in a web 
+     browser, you must set the xml-stylesheet processing instruction -->
+<?xml-stylesheet type="text/xsl" href="chx2html.xsl"?>
+
+<!-- whitespace and blank lines are generally ignored. An exception to 
+this is if your .chx file is embedded in a .tex document using the 
+\checklistxml{} macro. Due to a bug in the \checklistxml{} macro 
+blank lines are not allowed in that case -->
+
+
+<!-- The main tag of "checklist" surrounds the entire contents of the 
+     .chx file. You can optionally give it an attribute of "filled", which
+     should be "true", "false", or blank (assumed false) 
+
+     the xmlns attributes are REQUIRED and must match exactly.
+
+     Tools should either keep the allchecked attribute in sync 
+     with whether all boxes are checked, or remove it entirely
+-->
+
+<checklist xmlns="http://thermal.cnde.iastate.edu/checklist" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" filled="false" allchecked="false">
+  <!-- At the top of the checklist block you can specify parameters
+       of the checklist as a whole. Specifically:
+        * "clinfo", which identifies the checklist (usually the 
+          filename, followed by a version and a date).  -->
+  <clinfo>chxexample_V1.0_12/31/12</clinfo>
+  <!--  * "cltitle", title to be shown at the top of the checklist -->
+  <cltitle>Example checklist</cltitle>
+  <!--  * "specimen", which identifies which specimen this checklist is about. 
+          There can be an optional "reset" attribute which can be "true" or 
+          "false" to indicate whether the specimen box should be cleared
+          when the checklist is reset -->
+  <specimen reset="false">12-12345</specimen>
+  <!--  * "perfby", Name of person performing checklist -->
+  <perfby>Holland</perfby>
+  <!--  * "date", iso8601 calendar date when checklist was performed; 
+                  can also be a full iso8601 timestamp -->
+  <!-- Leave out the date tag entirely in a .chx file so it will be 
+       auto-filled -->
+  <date>2012-12-31</date>
+  <!--  * "dest", Destination folder, if automated disposition is desired 
+          There can be an optional "reset" attribute which can be "true" or 
+          "false" to indicate whether the dest box should be cleared
+          when the checklist is reset 
+	  
+	  There is also an optional "autofilename" attribute which defines
+	  an XPath (absolute, or relative to the checklist as context node) which is 
+	  a string representing the desired filename. ... You can even refer to 
+	  values inside checkitem textentries, e.g. 
+
+          You must use the 'chx:' prefix on all element matching 
+	  (but not attribute matching)
+
+	  "concat('chxexample_',normalize-space(chx:checkitem[@title='This is an example text entry']/chx:parameter[@name='text']),'.chf')
+  -->
+
+  <dest reset="false" autofilename="concat('chxexample_',chx:specimen,'_',chx:date,'.chf')">examples</dest>
+
+  <!-- The bulk of the checklist file is a sequence of "checkitem" tags -->
+  <!-- The checkitem tag has two forms: Simplified or Full -->
+
+  <!-- Simplfied form: Just place the title of this item within "checkitem" tags -->
+  <checkitem>Perform the checklist</checkitem>
+
+  <!-- You can also place a more detailed description in a "description" tag
+       within the "checkitem" tag; a "checked" attribute in a filled 
+       checklist can be used to indicate that this item is already checked. -->
+  <checkitem checked="true">
+    Perform the checklist again
+    <description>
+      Redoing the checklist reduces the chance of an error.
+    </description>
+  </checkitem>
+
+  <!-- Full form: The title goes in a "title" attribute"; a "class"
+                  attribute can specify how this checklist
+		  item should be interpreted/rendered. Also 
+		  additional "parameter" tags with more information can be 
+		  nested within the "checkitem" tag -->
+  <checkitem class="text" title="Perform the checklist a third time">
+    <parameter type="str" name="description">
+      Repeating the checklist again is probably a waste of time but 
+      we do it anyway 
+    </parameter>
+  </checkitem>
+
+  <!-- Text entry fields can also be specified -->
+  <checkitem class="textentry" title="This is an example text entry">
+    <parameter type="str" name="description">
+      This is a handy place to write a more detailed description of the
+      text and what should be entered. You can use simple <i>HTML</i> markup:
+      &lt;b&gt;<b>bold</b>&lt;/b&gt;, &lt;i&gt;<i>italic</i>&lt;/i&gt;, &lt;sub&gt;<sub>subscript</sub>&lt;/sub&gt;, &lt;sup&gt;<sup>superscript</sup>&lt;/sup&gt;, &lt;tt&gt;<tt>typewriter</tt>&lt;tt&gt;, &lt;s&gt;<s>strikeout</s>&lt;/s&gt;, &lt;u&gt;<u>underline</u>&lt;/u&gt;, and &lt;br/&gt; (linebreak).<br/><br/>
+<b>Note: Do not put a space immediately after the linebreak (but a CR/newline is OK)</b>
+
+    </parameter>
+    <parameter type="str" name="initialtext">
+      Initial text in the entry box (to be placed there on reset)
+    </parameter>
+    <parameter type="str" name="text">
+      Actual text entered
+    </parameter>
+    <parameter type="int" name="width">
+      <!-- Requested minimum text box width, in characters -->
+      40
+    </parameter>
+  </checkitem>
+
+  <!-- textgraphic fields can also be specified -->
+  <checkitem class="textgraphic" title="This is an example text graphic step">
+    <parameter type="str" name="description">
+      You can provide an image as well to support the step's text using
+      the "textgraphic" class. 
+    </parameter>
+
+    <!-- Can explictly set the width in pixels of the graphic so that it will be scaled to the correct size -->
+    <parameter type="float" name="width">
+      160
+    </parameter>
+    <!-- use png or jpg images -->
+    <parameter type="str" name="image">
+      chxexampleimg.png
+    </parameter>
+  </checkitem>
+
+  <!-- checklists designed to integrate with dataguzzler using the 
+       dg_checklist tool can have checklist items with classes 
+       other than "text" or "textentry". Other classes include: 
+         * "adjustparam", an adjustable dataguzzler parameter
+         * "command", a command to execute
+         * "multiparam", two parameters to adjust simultaneously
+         * "sweepfreq", adjustment of sweep frequency band
+         * "burstfreq", adjustment of burst frequency
+         * "textgraphic", a step with a graphic image in addtion to text
+       These extra classes take extra parameters. 
+  -->
+
+  <!-- There can also be a <notes> </notes> field here that should store
+  written notes from when the checklist was filled out -->
+
+</checklist>

@@ -1,0 +1,104 @@
+This is TeX, Version 3.141592 (Web2C 7.5.6) (format=tex 2012.5.30)  4 DEC 2012 16:36
+**./etexcmds.dtx
+(./etexcmds.dtx (/usr/share/texmf/tex/latex/base/docstrip.tex
+\blockLevel=\count26
+\emptyLines=\count27
+\processedLines=\count28
+\commentsRemoved=\count29
+\commentsPassed=\count30
+\codeLinesPassed=\count31
+\TotalprocessedLines=\count32
+\TotalcommentsRemoved=\count33
+\TotalcommentsPassed=\count34
+\TotalcodeLinesPassed=\count35
+\NumberOfFiles=\count36
+\inFile=\read0
+\inputcheck=\read1
+\@tempcnta=\count37
+\off@0=\count38
+\off@1=\count39
+\off@2=\count40
+\off@3=\count41
+\off@4=\count42
+\off@5=\count43
+\off@6=\count44
+\off@7=\count45
+\off@8=\count46
+\off@9=\count47
+\off@10=\count48
+\off@11=\count49
+\off@12=\count50
+\off@13=\count51
+\off@14=\count52
+\off@15=\count53
+\@temptokena=\toks12
+\@maxfiles=\count54
+\@maxoutfiles=\count55
+
+Utility: `docstrip' 2.5d <2005/07/29>
+English documentation    <1999/03/31>
+
+**********************************************************
+* This program converts documented macro-files into fast *
+* loadable files by stripping off (nearly) all comments! *
+**********************************************************
+
+********************************************************
+* No Configuration file found, using default settings. *
+********************************************************
+
+)
+************************************************************************
+* Installation
+* Package: etexcmds 2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
+
+************************************************************************
+
+Generating file(s) etexcmds.ins etexcmds.drv etexcmds.sty etexcmds-test1.tex et
+excmds-test2.tex etexcmds-test3.tex etexcmds-test4.tex etexcmds.xml 
+\openout0 = `etexcmds.ins'.
+
+\openout1 = `etexcmds.drv'.
+
+\openout2 = `etexcmds.sty'.
+
+\openout3 = `etexcmds-test1.tex'.
+
+\openout4 = `etexcmds-test2.tex'.
+
+\openout5 = `etexcmds-test3.tex'.
+
+\openout6 = `etexcmds-test4.tex'.
+
+\openout7 = `etexcmds.xml'.
+
+
+Processing file etexcmds.dtx (install) -> etexcmds.ins
+                             (driver) -> etexcmds.drv
+                             (package) -> etexcmds.sty
+                             (test1) -> etexcmds-test1.tex
+                             (test2) -> etexcmds-test2.tex
+                             (test3) -> etexcmds-test3.tex
+                             (test4) -> etexcmds-test4.tex
+                             (catalogue) -> etexcmds.xml
+File etexcmds.dtx ended by \endinput.
+Lines  processed: 978
+Comments removed: 447
+Comments  passed: 0
+Codelines passed: 511
+
+************************************************************************
+*
+* To finish the installation you have to move the following
+* file into a directory searched by TeX:
+*
+*     etexcmds.sty
+*
+* To produce the documentation run the file `etexcmds.drv'
+* through LaTeX.
+*
+* Happy TeXing!
+*
+************************************************************************
+ )
+No pages of output.

@@ -1,0 +1,118 @@
+#! /usr/bin/python
+# usage: chx2pdf <basename.chx> <optional specimen> <optional perfby> <optional date> <optional dest>
+# converts <basename.chx> to <basename>.texml to <basename>.tex to <basename>.pdf
+# Output file is left in the current directory
+# Intermediates are stored in /tmp
+
+import sys
+import subprocess
+import os
+import os.path
+import shutil
+import string
+
+
+scriptfile=os.path.realpath(__file__)
+scriptdir=os.path.dirname(scriptfile)
+libdir=os.path.join(scriptdir,'../lib')
+latexdir=os.path.join(scriptdir,'../latex')
+
+contextdir=os.path.abspath(os.curdir) # current directory
+tmpdir=os.tempnam(None,"chx2pdf_") # full path of temporary directory
+
+if len(sys.argv) < 2:
+   print "usage: chx2pdf <chxfile.chx> <optional specimen> <optional perfby> <optional date> <optional dest>"
+   print " " 
+   print "converts <chxfile.chx> to <chxfile>.pdf"
+   print " "
+   sys.exit(1)
+   pass
+
+chxfile=sys.argv[1] # relative path from current directory to chx file
+chxfilename=os.path.basename(chxfile) # name portion only
+chxdirname=os.path.dirname(os.path.abspath(chxfile))  # directory containing chx file
+basename=os.path.splitext(chxfilename)[0]  # name portion only, without extension
+chxtmpfile=os.path.join(tmpdir,chxfilename) # path of chx file copy to be placed in temporary directory
+
+os.mkdir(tmpdir)
+shutil.copyfile(chxfile,chxtmpfile)
+
+
+# Configure latex .... 
+
+# Set TEXMFHOME to include our latex directory
+os.environ["TEXMFHOME"]="%s//;%s" % (latexdir,os.path.join(latexdir,"external"))
+
+# obtain value of TEXMF so we can substitute into TEXINPUTS  # see TEXINPUTS.pdflatex in /usr/share/texlive/texmf/web2c/texmf.cnf
+
+kpsewhich=subprocess.Popen(["kpsewhich","--var-value","TEXINPUTS.pdflatex"],stdout=subprocess.PIPE)
+(PDFLATEX_TEXINPUTS,junk)=kpsewhich.communicate()
+
+while PDFLATEX_TEXINPUTS[-1].isspace():
+   PDFLATEX_TEXINPUTS=PDFLATEX_TEXINPUTS[1:-1]
+   pass
+
+
+# Configure TEXINPUTS to include source directory and result of TEXMFHOME
+
+os.environ["TEXINPUTS"]=".;%s;%s" % (chxdirname,PDFLATEX_TEXINPUTS)
+
+#print "TEXINPUTS=" + os.environ["TEXINPUTS"]
+
+xsltargs=[ "xsltproc" ]
+
+if len(sys.argv) >= 3 and len(sys.argv[2]) > 0:
+   xsltargs.append("--stringparam")
+   xsltargs.append("specimen")
+   xsltargs.append(sys.argv[2])
+   pass
+
+if len(sys.argv) >= 4 and len(sys.argv[3]) > 0:
+   xsltargs.append("--stringparam")
+   xsltargs.append("perfby")
+   xsltargs.append(sys.argv[3])
+   pass
+
+if len(sys.argv) >= 5 and len(sys.argv[4]) > 0:
+   xsltargs.append("--stringparam")
+   xsltargs.append("date")
+   xsltargs.append(sys.argv[4])
+   pass
+
+if len(sys.argv) >= 6 and len(sys.argv[5]) > 0:
+   xsltargs.append("--stringparam")
+   xsltargs.append("dest")
+   xsltargs.append(sys.argv[5])
+   pass
+
+xsltargs.append(os.path.join(libdir,"chx2texml.xsl"))
+xsltargs.append(chxfilename)
+os.chdir(tmpdir)
+try :
+   fh=file(chxfile) # make sure chx file readable
+   fh.close()
+   pass
+except: 
+   sys.stderr.write("Error reading input file %s ...\n" % (chxfile))
+   raise
+
+texmlfile=basename+".texml"
+texmlfh=file(texmlfile,"w")
+subprocess.call(xsltargs,stdout=texmlfh)
+texmlfh.close()
+
+texfile=basename+".tex"
+subprocess.call(["texml",texmlfile,texfile])
+
+
+#print "TEXMFHOME=" + os.environ["TEXMFHOME"]
+pdffile=basename+".pdf"
+subprocess.call(["pdflatex","--shell-escape",texfile])
+# os.remove(os.path.join(tmpdir,basename+"-pics.pdf"))
+
+# subprocess.call(["pdflatex","--shell-escape",texfile])
+subprocess.call(["pdflatex","--shell-escape",texfile])
+subprocess.call(["pdflatex","--shell-escape",texfile])
+
+shutil.copyfile(pdffile,os.path.join(contextdir,pdffile))
+os.chdir(contextdir)

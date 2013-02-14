@@ -1,0 +1,36 @@
+This is pdfTeX, Version 3.1415926-2.5-1.40.13 (TeX Live 2013/dev) (format=pdflatex 2013.1.7)  8 JAN 2013 00:03
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**preview.dtx
+(./preview.dtx
+LaTeX2e <2011/06/27>
+Babel <v3.8m> and hyphenation patterns for english, dumylang, nohyphenation, po
+lish, hungarian, bokmal, nynorsk, spanish, french, german, ngerman, swissgerman
+, portuguese, danish, basque, swedish, finnish, dutch, ukenglish, usenglishmax,
+ italian, russian, ukrainian, friulan, arabic, ethiopic, romanian, catalan, wel
+sh, ibycus, afrikaans, esperanto, galician, lithuanian, uppersorbian, german-x-
+2012-05-30, ngerman-x-2012-05-30, indonesian, greek, turkmen, mongolian, mongol
+ianlmc, croatian, slovak, romansh, farsi, slovenian, irish, estonian, bulgarian
+, interlingua, czech, latvian, kurmanji, coptic, sanskrit, icelandic, pinyin, l
+atin, assamese, bengali, gujarati, hindi, kannada, malayalam, marathi, oriya, p
+anjabi, tamil, telugu, serbian, serbianc, armenian, turkish, loaded.
+! Use of \reserved doesn't match its definition.
+l.442 \reserved@a
+                 \pr@version $Name: release_11_86 $ \ifx\pr@version\@empty
+? 
+! Emergency stop.
+l.442 \reserved@a
+                 \pr@version $Name: release_11_86 $ \ifx\pr@version\@empty
+End of file on the terminal!
+
+ 
+Here is how much of TeX's memory you used:
+ 7 strings out of 493506
+ 145 string characters out of 3144133
+ 48373 words of memory out of 3000000
+ 3411 multiletter control sequences out of 15000+200000
+ 3640 words of font info for 14 fonts, out of 3000000 for 9000
+ 953 hyphenation exceptions out of 8191
+ 5i,0n,3p,90b,8s stack positions out of 5000i,500n,10000p,200000b,50000s
+!  ==> Fatal error occurred, no output PDF file produced!

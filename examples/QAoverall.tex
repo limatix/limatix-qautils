@@ -1,0 +1,84 @@
+\documentclass{QAstatement}
+
+% build with pdflatex --shell-escape QAoverall.tex
+
+
+
+\begin{document}
+\title{QA Statement for Vibrothermography Model Development}
+\author{Stephen D. Holland}
+\date{December 4, 2012}
+
+\maketitle
+
+\section*{Motivation}
+{\small (This section gives the big picture of why our process needs QA)} \\
+The research program we have been asked to undertake is moderately 
+high risk and on a compressed schedule. 
+\begin{enumerate}
+  \item There isn't time or funding to redo experiments an extra time in case we mess them up the first time. 
+  \item Based on previous experiments we know the empirical portion of the 
+model will have a moderately high variance. In case the variance is too 
+high to be useful we need to have tightly controlled processes in order
+to show that the variance is a result of the inherent physical processes
+of vibrothermography as opposed to lousy experimental practices. 
+  \item Since there is a chance that our results will be used in 
+safety-critical lifing and POD estimation, it is our moral responsibility
+to make sure that our results are accurate. 
+\end{enumerate}
+For these reasons we need quality assurance processes in place to make
+sure that process steps are performed correctly and documented. 
+
+\section*{Action}
+{\small (This section lists specific QA needs and our 
+approach to satisfying them. It can also be used to explain
+how things work under the hood.)} \\
+\begin{itemize}
+\item We will document all repeatable processes or
+  controlled experiments. We will keep records of completion of those process
+  steps in case questions come up later. 
+\item We will maximize the use of automation to eliminate the chance of 
+human error, but we will still monitor the automatic processes to catch software bugs and equipment malfunctions.
+% \item We will make note of anomalies. 
+\item Lest files and knowledge become distributed across the team, we
+  will store results in (or migrate results to) a central location
+  that we will keep well organized.
+\item So that our results are traceable, we will track changes and versions of processes, analysis scripts, etc. 
+\item We will give each other feedback on our processes in both design and execution stages. 
+\end{itemize}
+
+\section*{Checklists}
+{\small (This section lists specific actions one-by-one. Recommend 
+writing it in XML so that it works with our automation tools.)} \\
+(checklist begins on next page)
+ 
+% \checklistxml: First parameter is identifier for this checklist
+%                Second parameter is XML of this checklist
+\checklistxml{chk}{<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chx2html.xsl"?>
+<!-- IMPORTANT... Edit this ONLY in QAoverall.tex, not the QAoverall.chx copy 
+     which may be overwritten when QAoverall.tex is recompiled -->
+<!-- Note: due to a bug in QAmanual.cls, blank lines are not allowed -->
+<checklist xmlns="http://thermal.cnde.iastate.edu/checklist" xmlns:chx="http://thermal.cnde.iastate.edu/checklist"> 
+    <!-- clinfo should be the base name of the .tex file, followed by
+         an underscore and the checklist identifier, followed by an
+         underscore and the version, followed by an underscore and the
+         date. -->
+    <clinfo>QAoverall_chk_V0.1_12/5/2012</clinfo>
+    <cltitle>Checklist for writing quality assurance plans</cltitle>
+    <checkitem>I have read the QA manual for Vibrothermography Model Development</checkitem>
+    <checkitem>I have written a QA manual for my process that documents the rationale for the process, and specific QA needs. </checkitem>
+    <checkitem>Attached to the QA manual for my process is a checklist.</checkitem>
+    <checkitem>I have documented how and where the results and outputs from my process will be stored, and these files will make their way to the central 
+repository. </checkitem>
+    <checkitem>My process is automated to the extent practical</checkitem>
+    <checkitem>My process includes steps to cross-check, to make sure the results are meaningful, and to make note of anomalies.</checkitem>
+    <checkitem>Versions and changes of my process, scripts, etc. are
+managed and tracked. If possible, script versions should be automatically
+saved to data files.</checkitem>
+    <checkitem>I have asked another team member for input on this process 
+and its documentation, and I have improved it according to his or her input. </checkitem>
+</checklist>
+}
+
+\end{document}
