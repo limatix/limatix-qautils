@@ -36,7 +36,9 @@ install: clean
 	cp -a lib $(INSTDIR)/lib
 	cp -a checklist $(INSTDIR)/checklist
 
+	rm -f $(PREFIX)/bin/chx2pdf
 	ln -s $(INSTDIR)/bin/chx2pdf $(PREFIX)/bin/chx2pdf
+	rm -f $(PREFIX)/bin/QAstatement2pdf
 	ln -s $(INSTDIR)/bin/QAstatement2pdf $(PREFIX)/bin/QAstatement2pdf
 
 commit: clean
