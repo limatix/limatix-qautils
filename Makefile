@@ -1,5 +1,6 @@
 PREFIX=/usr/local
 INSTDIR=$(PREFIX)/QAutils
+INSTALL=install
 
 all:
 	echo "Nothing to do"
