@@ -41,7 +41,7 @@ shutil.copyfile(chxfile,chxtmpfile)
 # Configure latex .... 
 
 # Set TEXMFHOME to include our latex directory
-os.environ["TEXMFHOME"]="%s//;%s" % (latexdir,os.path.join(latexdir,"external"))
+os.environ["TEXMFHOME"]="%s//" % (latexdir)
 
 # obtain value of TEXMF so we can substitute into TEXINPUTS  # see TEXINPUTS.pdflatex in /usr/share/texlive/texmf/web2c/texmf.cnf
 
@@ -49,7 +49,7 @@ kpsewhich=subprocess.Popen(["kpsewhich","--var-value","TEXINPUTS.pdflatex"],stdo
 (PDFLATEX_TEXINPUTS,junk)=kpsewhich.communicate()
 
 while PDFLATEX_TEXINPUTS[-1].isspace():
-   PDFLATEX_TEXINPUTS=PDFLATEX_TEXINPUTS[1:-1]
+   PDFLATEX_TEXINPUTS=PDFLATEX_TEXINPUTS[0:-1]
    pass
 
 
