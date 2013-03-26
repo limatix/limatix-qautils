@@ -727,12 +727,12 @@ var saveAs = saveAs
 		xmlitem.setAttribute("checked",checkitem.checked.toString());
 		
 		// Get Handle to Log if it Exists - Otherwise Create It
-		if (checklistxml.getElementsByTagName("log").length==0) {
-			newel = checklistxml.createElement("log");
-			log = checklistxml.getElementsByTagName("checklist")[0].appendChild(newel);
+		if (checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log").length==0) {
+			newel = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","log");
+			log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","checklist")[0].appendChild(newel);
 		}
 		else {
-			log = checklistxml.getElementsByTagName("log")[0];
+			log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log")[0];
 		}
 		// Get a Timestamp
 		var currentdate = new Date();
@@ -747,7 +747,7 @@ var saveAs = saveAs
 			logmessage = "Item " + String(numberstring) + " Marked Not Complete";
 		}
 		// Append to Log
-		logentry = checklistxml.createElement("logentry");
+		logentry = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","logentry");
 		logentry.setAttribute("timestamp", timestamp);
 		logentry.setAttribute("item", numberstring)
 		logentrytext = checklistxml.createTextNode(logmessage);
@@ -765,12 +765,12 @@ var saveAs = saveAs
         var xmlitemtext=checklistxml.evaluate("chx:checklist/chx:checkitem[@checkitemnum=\""+numberstring+"\"]/chx:parameter[@name=\"text\"]",checklistxml,nsresolver,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue;
 	xmlitemtext.textContent=textentry.value;
 	// Get Handle to Log if it Exists - Otherwise Create It
-		if (checklistxml.getElementsByTagName("log").length==0) {
-			newel = checklistxml.createElement("log");
-			log = checklistxml.getElementsByTagName("checklist")[0].appendChild(newel);
+		if (checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log").length==0) {
+			newel = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","log");
+			log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","checklist")[0].appendChild(newel);
 		}
 		else {
-			log = checklistxml.getElementsByTagName("log")[0];
+			log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log")[0];
 		}
 		// Get a Timestamp
 		var currentdate = new Date();
@@ -778,7 +778,7 @@ var saveAs = saveAs
 		// Set Log Status Message
 		logmessage = "Text Field " + textentry.getAttribute("id") + " on Item " + String(numberstring) + " Updated";
 		// Append to Log
-		logentry = checklistxml.createElement("logentry");
+		logentry = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","logentry");
 		logentry.setAttribute("timestamp", timestamp);
 		logentry.setAttribute("item", numberstring)
 		logentrytext = checklistxml.createTextNode(logmessage);
@@ -795,12 +795,12 @@ var saveAs = saveAs
 	xmlnotes.textContent=notesarea.value;
 
 		// Get Handle to Log if it Exists - Otherwise Create It
-		if (checklistxml.getElementsByTagName("log").length==0) {
-			newel = checklistxml.createElement("log");
-			log = checklistxml.getElementsByTagName("checklist")[0].appendChild(newel);
+		if (checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log").length==0) {
+			newel = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","log");
+			log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","checklist")[0].appendChild(newel);
 		}
 		else {
-			log = checklistxml.getElementsByTagName("log")[0];
+			log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log")[0];
 		}
 		// Get a Timestamp
 		var currentdate = new Date();
@@ -808,7 +808,7 @@ var saveAs = saveAs
 		// Set Log Status Message
 		logmessage = "Notes Area Updated";
 		// Append to Log
-		logentry = checklistxml.createElement("logentry");
+		logentry = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","logentry");
 		logentry.setAttribute("timestamp", timestamp);
 		logentry.setAttribute("item", "notes")
 		logentrytext = checklistxml.createTextNode(logmessage);
@@ -902,12 +902,12 @@ var saveAs = saveAs
 		textxml.textContent=textinput.value;
 		
 		// Get Handle to Log if it Exists - Otherwise Create It
-		if (checklistxml.getElementsByTagName("log").length==0) {
-			newel = checklistxml.createElement("log");
-			log = checklistxml.getElementsByTagName("checklist")[0].appendChild(newel);
+		if (checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log").length==0) {
+			newel = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","log");
+			log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","checklist")[0].appendChild(newel);
 		}
 		else {
-			log = checklistxml.getElementsByTagName("log")[0];
+			log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log")[0];
 		}
 		// Get a Timestamp
 		var currentdate = new Date();
@@ -915,7 +915,7 @@ var saveAs = saveAs
 		// Set Log Status Message
 		logmessage = "Text Field " + textinput.getAttribute("name") + " Updated";
 		// Append to Log
-		logentry = checklistxml.createElement("logentry");
+		logentry = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","logentry");
 		logentry.setAttribute("timestamp", timestamp);
 		logentry.setAttribute("item", textinput.getAttribute("name"))
 		logentrytext = checklistxml.createTextNode(logmessage);
