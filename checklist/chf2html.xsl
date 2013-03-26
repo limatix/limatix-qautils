@@ -427,11 +427,24 @@ function addLoadEvent(func) {
 
 <h2>Notes</h2>
 <textarea rows="6" cols="80" disabled="true" id="notes"><xsl:value-of select="chx:notes"/></textarea>
+
+<h3>Checklist Log</h3>
+
+      <table style="font-size:x-small;">
+      <xsl:for-each select="//chx:logentry">
+        <tr>
+          <td><xsl:value-of select="@timestamp"/></td>
+          <td><xsl:value-of select="."/></td>
+        </tr>
+      </xsl:for-each>
+      </table>
+
 </form>
 </xsl:template>
 
 
 <xsl:template match="chx:checkitem">
+  <xsl:variable name="number"><xsl:number/></xsl:variable>
   <xsl:variable name="title">
     <xsl:choose>
       <xsl:when test="string-length(string(@title)) > 0">
@@ -515,7 +528,13 @@ function addLoadEvent(func) {
       </xsl:if>
 
 
-    </tr></table>
+    </tr>
+  </table>
+  <xsl:if test="//chx:logentry[@item=$number]">
+ 
+    <span style="font-size:xx-small">Last Updated: <xsl:value-of select="(//chx:logentry[@item=$number]/@timestamp)[last()]"/></span>
+
+    </xsl:if>
     </td>
     <td>
       <xsl:element name="input">
@@ -603,5 +622,6 @@ any checkitems with class=="textentry" have
 <xsl:template match="chx:date"/>
 <xsl:template match="chx:dest"/>
 <xsl:template match="chx:notes"/>
+<xsl:template match="chx:log"/>
 
 </xsl:stylesheet>
