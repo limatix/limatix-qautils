@@ -40,6 +40,8 @@ install: clean
 	ln -s $(INSTDIR)/bin/chx2pdf $(PREFIX)/bin/chx2pdf
 	rm -f $(PREFIX)/bin/QAstatement2pdf
 	ln -s $(INSTDIR)/bin/QAstatement2pdf $(PREFIX)/bin/QAstatement2pdf
+	rm -f $(PREFIX)/bin/printQRcode
+	ln -s $(INSTDIR)/bin/printQRcode $(PREFIX)/bin/printQRcode
 
 commit: clean
 	hg addremove

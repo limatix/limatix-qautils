@@ -1,0 +1,190 @@
+#! /usr/bin/python
+# See usage, below
+# Intermediates are stored in /tmp
+
+import sys
+import re
+import subprocess
+import os
+import os.path
+import shutil
+import string
+import math
+
+
+scriptfile=os.path.realpath(__file__)
+scriptdir=os.path.dirname(scriptfile)
+libdir=os.path.join(scriptdir,'../lib')
+latexdir=os.path.join(scriptdir,'../latex')
+
+contextdir=os.path.abspath(os.curdir) # current directory
+tmpdir=os.tempnam(None,"prQRcd_") # full path of temporary directory
+
+densemode=False
+numcopies=1
+content="None"
+printer="Brother-QL-720NW"
+
+if len(sys.argv) < 2:
+   print "usage: printQRcode [-Pprinter] [-dense] [-<num-copies>] \"content\""
+   print " " 
+   print " prints a QR code to the .9\"x.9\" label printer"
+   print " "
+   sys.exit(1)
+   pass
+
+argnum=1
+while argnum < len(sys.argv):
+   arg=sys.argv[argnum]
+   
+   if arg[0]=='-':
+      if arg[1]=="P":
+         printer=arg[2:]
+         if len(printer)==0:
+            argnum+=1
+            printer=sys.argv[argnum]
+            pass
+         pass
+      elif arg[1].isdigit():
+         numcopies=int(arg[1:])
+         pass
+      elif arg[1:]=="dense":
+         densemode=True
+         pass
+      else :
+         sys.stderr.write("Unknown argument %s\n" % (arg))
+         sys.exit(1)
+         pass      
+      pass
+   else: 
+      content=arg
+      pass
+   argnum+=1
+   pass
+# Non-dense mode is good for a tag + value,... roughly 8 character 
+# tag name + punctuation plus 15 character content = 26 chars total
+# We automatically switch to dense mode after 23 characters
+
+if len(content) > 23:
+   densemode=True
+   pass
+
+os.mkdir(tmpdir)
+os.chdir(tmpdir)
+
+texfile=os.path.join(tmpdir,"qrfile.tex")
+texfh=file(texfile,"w")
+
+template=r"""\documentclass{article}
+\usepackage{pst-barcode}
+\usepackage[runs=3]{auto-pst-pdf}
+\usepackage[absolute]{textpos}
+\usepackage[utf8]{inputenc}
+
+\setlength{\pdfpagewidth}{23mm}
+\setlength{\pdfpageheight}{23mm}
+\renewcommand{\baselinestretch}{.90}
+
+%% This file is good for a tag + value,... roughly 8 character tag name + punctuation
+%% plus 15 character content 
+
+\begin{document}
+\thispagestyle{empty}
+\begin{textblock*}{.9in}(-.1in,5.9mm)
+\begin{pspicture}(.85in,0.85in)
+\psbarcode[scalex=0.7,scaley=0.7]{%s%s}{}{qrcode}
+\end{pspicture} 
+\vspace{-2.5mm} \\
+\hspace*{0.12in}\parbox[t]{.74in}{
+\scriptsize \tt %s %s}
+\end{textblock*}
+
+\end{document}
+"""
+
+densetemplate=r"""\documentclass{article}
+\usepackage{pst-barcode}
+\usepackage[runs=3]{auto-pst-pdf}
+\usepackage[absolute]{textpos}
+\usepackage[utf8]{inputenc}
+
+\setlength{\pdfpagewidth}{23mm}
+\setlength{\pdfpageheight}{23mm}
+
+%% word wrapping of continuous text, from http://www.latex-community.org/forum/viewtopic.php?f=44&t=3798:
+\makeatletter
+\newcommand*\wrapletters[1]{\wr@pletters#1\@nil}
+\def\wr@pletters#1#2\@nil{#1\allowbreak\if&#2&\else\wr@pletters#2\@nil\fi}
+\makeatother
+
+\begin{document}
+\thispagestyle{empty}
+\begin{textblock*}{.9in}(-.1in,5.9mm)
+\begin{pspicture}(.85in,0.85in)
+\psbarcode[scalex=0.6,scaley=0.6]{%s}{}{qrcode}
+\end{pspicture} 
+\vspace{-2.5mm} \\
+\hspace*{0.12in}\parbox[t]{.74in}{
+\tiny \tt \wrapletters{%s}}
+\end{textblock*}
+
+\end{document}
+"""
+
+if densemode:
+   texfh.write((densetemplate % (content,content)).encode("utf8"))
+   pass
+else :
+   # not dense mode
+   # ... figure out if we can split it up into tag and content
+   matchobj=re.match(r"""(<[^&#<>]+/>)(.*)""",content)
+   if matchobj is not None:
+      texfh.write((template % (matchobj.group(1),matchobj.group(2),matchobj.group(1),matchobj.group(2))).encode("utf8"))
+      pass
+   else :
+      texfh.write((template % (content,"",content,"")).encode("utf8"))
+      pass
+   
+   pass
+
+
+texfh.close()
+
+# Configure latex .... 
+
+# Set TEXMFHOME to include our latex directory
+os.environ["TEXMFHOME"]="%s//" % (latexdir)
+
+# obtain value of TEXMF so we can substitute into TEXINPUTS  # see TEXINPUTS.pdflatex in /usr/share/texlive/texmf/web2c/texmf.cnf
+
+kpsewhich=subprocess.Popen(["kpsewhich","--var-value","TEXINPUTS.pdflatex"],stdout=subprocess.PIPE)
+(PDFLATEX_TEXINPUTS,junk)=kpsewhich.communicate()
+
+while PDFLATEX_TEXINPUTS[-1].isspace():
+   PDFLATEX_TEXINPUTS=PDFLATEX_TEXINPUTS[0:-1]
+   pass
+
+
+# Configure TEXINPUTS to include source directory and result of TEXMFHOME
+
+os.environ["TEXINPUTS"]=".;%s" % (PDFLATEX_TEXINPUTS)
+
+# print "TEXINPUTS=" + os.environ["TEXINPUTS"]
+
+
+# print "TEXMFHOME=" + os.environ["TEXMFHOME"]
+pdffile="qrfile.pdf"
+subprocess.call(["pdflatex","--shell-escape",texfile])
+# os.remove(os.path.join(tmpdir,basename+"-pics.pdf"))
+
+# subprocess.call(["pdflatex","--shell-escape",texfile])
+# subprocess.call(["pdflatex","--shell-escape",texfile])
+#subprocess.call(["pdflatex","--shell-escape",texfile])
+
+# shutil.copyfile(pdffile,os.path.join(contextdir,pdffile))
+
+# correct numcopies because driver bug means if we request 
+# n copies, we get n^2 copies
+root_numcopies=int(math.ceil(math.sqrt(numcopies)))
+subprocess.call(["lpr","-#%d" % (root_numcopies),"-P%s" % (printer),"%s" % (pdffile)])
+os.chdir(contextdir)
