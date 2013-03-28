@@ -1314,5 +1314,6 @@ any checkitems with class=="textentry" have
 <xsl:template match="chx:date"/>
 <xsl:template match="chx:dest"/>
 <xsl:template match="chx:notes"/>
+<xsl:template match="chx:log"/>
 
 </xsl:stylesheet>
