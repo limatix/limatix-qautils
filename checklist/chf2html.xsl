@@ -151,7 +151,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
       <xsl:attribute name="style">color:green;</xsl:attribute>
     </xsl:when>
     <xsl:otherwise>
-      <xsl:attribute name="style">color:red;fontWeight:bold;</xsl:attribute>
+      <xsl:attribute name="style">color:red;font-weight:bold;</xsl:attribute>
     </xsl:otherwise>
   </xsl:choose>
 	<xsl:number/>
@@ -165,7 +165,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
       <xsl:attribute name="style">color:green;</xsl:attribute>
     </xsl:when>
     <xsl:otherwise>
-      <xsl:attribute name="style">color:red;fontWeight:bold;</xsl:attribute>
+      <xsl:attribute name="style">color:red;font-weight:bold;</xsl:attribute>
     </xsl:otherwise>
   </xsl:choose>
         <xsl:value-of select="@title"/>
