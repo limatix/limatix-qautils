@@ -736,7 +736,7 @@ var saveAs = saveAs
 		}
 		// Get a Timestamp
 		var currentdate = new Date();
-		var timestamp = currentdate.toString();
+		var timestamp = currentdate.toISOString();
 		// Set Log Status Message
 		if(checkitem.checked.toString() == "checked" || checkitem.checked.toString() == "true") 
 		{
