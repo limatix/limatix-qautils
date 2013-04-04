@@ -190,6 +190,7 @@ command:
 <xsl:template match="chx:perfby"/>
 <xsl:template match="chx:date"/>
 <xsl:template match="chx:dest"/>
+<xsl:template match="chx:log"/>
 
 
 <!-- This template trims leading and trailing spaces off a string-->
