@@ -26,6 +26,17 @@ blank lines are not allowed in that case -->
 -->
 
 <checklist xmlns="http://thermal.cnde.iastate.edu/checklist" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" filled="false" allchecked="false">
+  <!-- if this is a datacollect checklist you can put a 
+       dc:done_is_save_measurement="true" attribute in the <checklist> tag
+       to have datacollect turn the done button to a "Save measurement" button.
+       You will probably also want to set the shared="true" attribute of the 
+       <notes> tag below, so that your notes will be saved with the measurement.
+
+       Please note that to use the dc: prefix you need to define the datacollect
+       namespace in the checklist tag, e.g.
+         xmlns:dc="http://thermal.cnde.iastate.edu/datacollect"
+  -->
+        
   <!-- At the top of the checklist block you can specify parameters
        of the checklist as a whole. Specifically:
         * "clinfo", which identifies the checklist (usually the 
@@ -55,10 +66,25 @@ blank lines are not allowed in that case -->
 	  a string representing the desired filename. ... You can even refer to 
 	  values inside checkitem textentries, e.g. 
 
-          You must use the 'chx:' prefix on all element matching 
-	  (but not attribute matching)
+          Likewise there is an optional "autodcfilename" that overrides 
+	  "autofilename" when it is present when the checklist is used
+	  within datacollect
 
-	  "concat('chxexample_',normalize-space(chx:checkitem[@title='This is an example text entry']/chx:parameter[@name='text']),'.chf')
+          Rules for XPaths: 
+
+           * You must use the 'chx:' prefix on all element matching 
+	  (but not attribute matching)
+           * If the xpath includes a copy of the title of any check item, 
+          it inhibits datacollect autosave until that check item has been
+          checked 
+           * Elements within the checklist file may be accessed directly
+           * You can also use the dc:paramdb xpath function to access entries
+	  in the primary datacollect parameter database, e.g. 
+	   dc:paramdb('explogname')
+
+          Full example: 
+	  "concat('chxexample_',normalize-space(chx:checkitem[@title='This is an example text entry']/chx:parameter[@name='text']),'.chf')"
+
   -->
 
   <dest reset="false" autofilename="concat('chxexample_',chx:specimen,'_',chx:date,'.chf')">examples</dest>
@@ -142,6 +168,10 @@ blank lines are not allowed in that case -->
   -->
 
   <!-- There can also be a <notes> </notes> field here that should store
-  written notes from when the checklist was filled out -->
+  written notes from when the checklist was filled out 
+   When using datacollect, if the <notes> tag has a shared="true" 
+   attribute, then this notes field will be shared between the 
+   checklist and the datacollect trigger notes field. 
+  -->
 
 </checklist>
