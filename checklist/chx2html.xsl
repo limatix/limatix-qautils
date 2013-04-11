@@ -459,8 +459,8 @@ var saveAs = saveAs
           <xsl:attribute name=\"checkitemnum\"><xsl:number/></xsl:attribute>\
           <xsl:apply-templates/>\
           <!-- Give textentry a parameter name=text seeded with initialtext value if not present -->\
-  	  <xsl:if test="@class='textentry' and not(chx:parameter[@name='text'])">\
-            <chx:parameter type="str" name="text"><xsl:value-of select="chx:parameter[@name='initialtext']"/></chx:parameter>\
+  	  <xsl:if test=\"@class='textentry' and not(chx:parameter[@name='text'])\">\
+            <chx:parameter type=\"str\" name=\"text\"><xsl:value-of select=\"chx:parameter[@name='initialtext']\"/></chx:parameter>\
           </xsl:if>\
         </xsl:copy>\
       </xsl:template>\
