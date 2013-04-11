@@ -458,6 +458,10 @@ var saveAs = saveAs
           <xsl:copy-of select=\"@*\"/>\
           <xsl:attribute name=\"checkitemnum\"><xsl:number/></xsl:attribute>\
           <xsl:apply-templates/>\
+          <!-- Give textentry a parameter name=text seeded with initialtext value if not present -->\
+  	  <xsl:if test=\"@class='textentry' and not(chx:parameter[@name='text'])\">\
+            <chx:parameter type=\"str\" name=\"text\"><xsl:value-of select=\"chx:parameter[@name='initialtext']\"/></chx:parameter>\
+          </xsl:if>\
         </xsl:copy>\
       </xsl:template>\
       \
@@ -722,19 +726,68 @@ var saveAs = saveAs
         }
       }
 
-      
       function checkitemchanged(checkitem,numberstring) {
         var xmlitem=checklistxml.evaluate("chx:checklist/chx:checkitem[@checkitemnum=\""+numberstring+"\"]",checklistxml,nsresolver,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue;
-	xmlitem.setAttribute("checked",checkitem.checked.toString());
-	setcheckitemcolor(xmlitem,numberstring);
+		xmlitem.setAttribute("checked",checkitem.checked.toString());
+		
+		// Get Handle to Log if it Exists - Otherwise Create It
+		if (checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log").length==0) {
+			newel = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","log");
+			log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","checklist")[0].appendChild(newel);
+		}
+		else {
+			log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log")[0];
+		}
+		// Get a Timestamp
+		var currentdate = new Date();
+		var timestamp = currentdate.toISOString();
+		// Set Log Status Message
+		if(checkitem.checked.toString() == "checked" || checkitem.checked.toString() == "true") 
+		{
+			logmessage = "Item " + String(numberstring) + " Marked Complete";
+		}
+		else 
+		{
+			logmessage = "Item " + String(numberstring) + " Marked Not Complete";
+		}
+		// Append to Log
+		logentry = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","logentry");
+		logentry.setAttribute("timestamp", timestamp);
+		logentry.setAttribute("item", numberstring)
+		logentrytext = checklistxml.createTextNode(logmessage);
+		logentry.appendChild(logentrytext);
+		log.appendChild(logentry);
+
+
+		setcheckitemcolor(xmlitem,numberstring);
 	
-	set_savecolor_and_allchecked_attribute();
+		set_savecolor_and_allchecked_attribute();
 
       }
 
       function textentrychanged(textentry,numberstring) {
-        var xmlitemtext=checklistxml.evaluate("chx:checklist/chx:checkitem[@checkitemnum=\""+numberstring+"\"]/parameter[@name=\"text\"]",checklistxml,nsresolver,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue;
+        var xmlitemtext=checklistxml.evaluate("chx:checklist/chx:checkitem[@checkitemnum=\""+numberstring+"\"]/chx:parameter[@name=\"text\"]",checklistxml,nsresolver,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue;
 	xmlitemtext.textContent=textentry.value;
+	// Get Handle to Log if it Exists - Otherwise Create It
+		if (checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log").length==0) {
+			newel = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","log");
+			log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","checklist")[0].appendChild(newel);
+		}
+		else {
+			log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log")[0];
+		}
+		// Get a Timestamp
+		var currentdate = new Date();
+		var timestamp = currentdate.toString();
+		// Set Log Status Message
+		logmessage = "Text Field " + textentry.getAttribute("id") + " on Item " + String(numberstring) + " Updated";
+		// Append to Log
+		logentry = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","logentry");
+		logentry.setAttribute("timestamp", timestamp);
+		logentry.setAttribute("item", numberstring)
+		logentrytext = checklistxml.createTextNode(logmessage);
+		logentry.appendChild(logentrytext);
+		log.appendChild(logentry);
 
 	UpdateAutofilename();
 
@@ -744,6 +797,28 @@ var saveAs = saveAs
       function updatenotes(notesarea) {
         var xmlnotes=checklistxml.evaluate("chx:checklist/chx:notes",checklistxml,nsresolver,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue;
 	xmlnotes.textContent=notesarea.value;
+
+		// Get Handle to Log if it Exists - Otherwise Create It
+		if (checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log").length==0) {
+			newel = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","log");
+			log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","checklist")[0].appendChild(newel);
+		}
+		else {
+			log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log")[0];
+		}
+		// Get a Timestamp
+		var currentdate = new Date();
+		var timestamp = currentdate.toString();
+		// Set Log Status Message
+		logmessage = "Notes Area Updated";
+		// Append to Log
+		logentry = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","logentry");
+		logentry.setAttribute("timestamp", timestamp);
+		logentry.setAttribute("item", "notes")
+		logentrytext = checklistxml.createTextNode(logmessage);
+		logentry.appendChild(logentrytext);
+		log.appendChild(logentry);
+
 	noteschanged=true;
 	setnotescolor();
 	set_savecolor_and_allchecked_attribute();
@@ -827,8 +902,29 @@ var saveAs = saveAs
 
       function textinputchanged(textinput) {
         var nodename=textinput.getAttribute("name")
-        var textxml=checklistxml.evaluate("chx:checklist/"+nodename,checklistxml,nsresolver,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue;
-	textxml.textContent=textinput.value;
+        var textxml=checklistxml.evaluate("chx:checklist/chx:"+nodename,checklistxml,nsresolver,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue;
+		textxml.textContent=textinput.value;
+		
+		// Get Handle to Log if it Exists - Otherwise Create It
+		if (checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log").length==0) {
+			newel = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","log");
+			log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","checklist")[0].appendChild(newel);
+		}
+		else {
+			log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log")[0];
+		}
+		// Get a Timestamp
+		var currentdate = new Date();
+		var timestamp = currentdate.toString();
+		// Set Log Status Message
+		logmessage = "Text Field " + textinput.getAttribute("name") + " Updated";
+		// Append to Log
+		logentry = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","logentry");
+		logentry.setAttribute("timestamp", timestamp);
+		logentry.setAttribute("item", textinput.getAttribute("name"))
+		logentrytext = checklistxml.createTextNode(logmessage);
+		logentry.appendChild(logentrytext);
+		log.appendChild(logentry);
 	
 	UpdateAutofilename();
 
@@ -1042,7 +1138,7 @@ var saveAs = saveAs
 </table>
 
 <h2>Notes</h2>
-<textarea rows="6" cols="80" onchange="updatenotes(this);" oninput="updatenotes(this);" id="notes"><xsl:value-of select="chx:notes"/></textarea>
+<textarea rows="6" cols="80" onchange="updatenotes(this);" id="notes"><xsl:value-of select="chx:notes"/></textarea>
 <br/>
 <input name="filenameinput" id="filenameinput" type="text"/>
 <button name="save" type="button" onclick="savexml();" id="savebutton">Save...</button>
@@ -1102,10 +1198,7 @@ var saveAs = saveAs
 		<xsl:value-of select="normalize-space(chx:parameter[@name='initialtext'])"/>
 	      </xsl:otherwise></xsl:choose>
 	    </xsl:attribute>
-	    <xsl:attribute name="onchange">textentrychanged(this,"<xsl:number/>");</xsl:attribute>
-	    <xsl:attribute name="onkeypress">textentrychanged(this,"<xsl:number/>");</xsl:attribute>
-	    <xsl:attribute name="onkeyup">textentrychanged(this,"<xsl:number/>");</xsl:attribute>
-	  
+	    <xsl:attribute name="onchange">textentrychanged(this,"<xsl:number/>");</xsl:attribute>	  
 	  </input>
         </td>
       </xsl:if>
@@ -1225,5 +1318,6 @@ any checkitems with class=="textentry" have
 <xsl:template match="chx:date"/>
 <xsl:template match="chx:dest"/>
 <xsl:template match="chx:notes"/>
+<xsl:template match="chx:log"/>
 
 </xsl:stylesheet>
