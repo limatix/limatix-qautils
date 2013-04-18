@@ -1072,7 +1072,6 @@ var saveAs = saveAs
       <!-- <xsl:copy-of select="/"/> --> 
       <xsl:apply-templates select="/" mode="copychecklist"/>
     </div>
-
   </body>
 </html>
 </xsl:template>
@@ -1111,22 +1110,22 @@ var saveAs = saveAs
 
     <xsl:call-template name="headertd">
       <xsl:with-param name="fieldname">specimen</xsl:with-param>
-      <xsl:with-param name="fieldval"><xsl:value-of select="chx:specimen"/></xsl:with-param>
+      <xsl:with-param name="fieldval"><xsl:choose><xsl:when test="$specimen!=''"><xsl:value-of select="$specimen"/></xsl:when><xsl:otherwise><xsl:value-of select="chx:specimen"/></xsl:otherwise></xsl:choose></xsl:with-param>
     </xsl:call-template>
 
     <xsl:call-template name="headertd">
       <xsl:with-param name="fieldname">perfby</xsl:with-param>
-      <xsl:with-param name="fieldval"><xsl:value-of select="chx:perfby"/></xsl:with-param>
+      <xsl:with-param name="fieldval"><xsl:choose><xsl:when test="$perfby!=''"><xsl:value-of select="$perfby"/></xsl:when><xsl:otherwise><xsl:value-of select="chx:perfby"/></xsl:otherwise></xsl:choose></xsl:with-param>
     </xsl:call-template>
 
     <xsl:call-template name="headertd">
       <xsl:with-param name="fieldname">date</xsl:with-param>
-      <xsl:with-param name="fieldval"><xsl:value-of select="chx:date"/></xsl:with-param>
+      <xsl:with-param name="fieldval"><xsl:choose><xsl:when test="$date!=''"><xsl:value-of select="$date"/></xsl:when><xsl:otherwise><xsl:value-of select="chx:date"/></xsl:otherwise></xsl:choose></xsl:with-param>
     </xsl:call-template>
 
     <xsl:call-template name="headertd">
       <xsl:with-param name="fieldname">dest</xsl:with-param>
-      <xsl:with-param name="fieldval"><xsl:value-of select="chx:dest"/></xsl:with-param>
+      <xsl:with-param name="fieldval"><xsl:choose><xsl:when test="$dest!=''"><xsl:value-of select="$dest"/></xsl:when><xsl:otherwise><xsl:value-of select="chx:dest"/></xsl:otherwise></xsl:choose></xsl:with-param>
     </xsl:call-template>
 
   </tr>
@@ -1289,9 +1288,33 @@ while converting markup into the html namespace -->
 
 <!-- Next templates are used to copy the checklist into the DOM tree -->
 <xsl:template  match="@*|node()" mode="copychecklist">
-  <xsl:copy>
-    <xsl:apply-templates select="@*|node()" mode="copychecklist"/>
-  </xsl:copy>
+  <xsl:choose>
+  	<xsl:when test="local-name()='specimen'">
+  		<xsl:copy>
+  			<xsl:choose><xsl:when test="$specimen!=''"><xsl:value-of select="$specimen"/></xsl:when><xsl:otherwise><xsl:value-of select="."/></xsl:otherwise></xsl:choose>
+  		</xsl:copy>
+  	</xsl:when>
+  	<xsl:when test="local-name()='perfby'">
+  		<xsl:copy>
+  			<xsl:choose><xsl:when test="$perfby!=''"><xsl:value-of select="$perfby"/></xsl:when><xsl:otherwise><xsl:value-of select="."/></xsl:otherwise></xsl:choose>
+  		</xsl:copy>
+  	</xsl:when>
+  	<xsl:when test="local-name()='date'">
+  		<xsl:copy>
+  			<xsl:choose><xsl:when test="$date!=''"><xsl:value-of select="$date"/></xsl:when><xsl:otherwise><xsl:value-of select="."/></xsl:otherwise></xsl:choose>
+  		</xsl:copy>
+  	</xsl:when>
+  	<xsl:when test="local-name()='dest'">
+  		<xsl:copy>
+  			<xsl:choose><xsl:when test="$dest!=''"><xsl:value-of select="$dest"/></xsl:when><xsl:otherwise><xsl:value-of select="."/></xsl:otherwise></xsl:choose>
+  		</xsl:copy>
+  	</xsl:when>
+  	<xsl:otherwise>
+	  <xsl:copy>
+	    <xsl:apply-templates select="@*|node()" mode="copychecklist"/>
+	  </xsl:copy>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 <!-- while copying into the DOM tree we need to make sure that 
