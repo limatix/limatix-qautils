@@ -29,8 +29,9 @@ blank lines are not allowed in that case -->
   <!-- if this is a datacollect checklist you can put a 
        dc:done_is_save_measurement="true" attribute in the <checklist> tag
        to have datacollect turn the done button to a "Save measurement" button.
-       You will probably also want to set the shared="true" attribute of the 
-       <notes> tag below, so that your notes will be saved with the measurement.
+       This also automatically syncs the <notes> tag of the checklist with the 
+       notes field of the datacollect measurement, so that your 
+       notes will be saved with the measurement.
 
        Please note that to use the dc: prefix you need to define the datacollect
        namespace in the checklist tag, e.g.
@@ -169,9 +170,6 @@ blank lines are not allowed in that case -->
 
   <!-- There can also be a <notes> </notes> field here that should store
   written notes from when the checklist was filled out 
-   When using datacollect, if the <notes> tag has a shared="true" 
-   attribute, then this notes field will be shared between the 
-   checklist and the datacollect trigger notes field. 
   -->
 
 </checklist>
