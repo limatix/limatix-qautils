@@ -654,7 +654,7 @@ var saveAs = saveAs
 	var curdateobj=new Date();
 	
 	// curdateiso is a global!
-	curdateiso=curdateobj.getFullYear()+'-'+padtotwodigit(curdateobj.getMonth()+1)+'-'+curdateobj.getDate();
+	curdateiso=curdateobj.getFullYear()+'-'+padtotwodigit(curdateobj.getMonth()+1)+'-'+padtotwodigit(curdateobj.getDate());
 
 	processor.setParameter(null,"date",curdateiso);
 
