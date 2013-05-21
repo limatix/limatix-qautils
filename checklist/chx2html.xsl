@@ -1292,25 +1292,25 @@ while converting markup into the html namespace -->
   <xsl:choose>
   	<xsl:when test="local-name()='specimen'">
   		<xsl:copy>
-  			<xsl:apply-templates select="@*|node()" mode="copychecklist"/>
+  			<xsl:apply-templates select="@*" mode="copychecklist"/>
   			<xsl:choose><xsl:when test="$specimen!=''"><xsl:value-of select="$specimen"/></xsl:when><xsl:otherwise><xsl:value-of select="."/></xsl:otherwise></xsl:choose>
   		</xsl:copy>
   	</xsl:when>
   	<xsl:when test="local-name()='perfby'">
   		<xsl:copy>
-  			<xsl:apply-templates select="@*|node()" mode="copychecklist"/>
+  			<xsl:apply-templates select="@*" mode="copychecklist"/>
   			<xsl:choose><xsl:when test="$perfby!=''"><xsl:value-of select="$perfby"/></xsl:when><xsl:otherwise><xsl:value-of select="."/></xsl:otherwise></xsl:choose>
   		</xsl:copy>
   	</xsl:when>
   	<xsl:when test="local-name()='date'">
   		<xsl:copy>
-  			<xsl:apply-templates select="@*|node()" mode="copychecklist"/>
+  			<xsl:apply-templates select="@*" mode="copychecklist"/>
   			<xsl:choose><xsl:when test="$date!=''"><xsl:value-of select="$date"/></xsl:when><xsl:otherwise><xsl:value-of select="."/></xsl:otherwise></xsl:choose>
   		</xsl:copy>
   	</xsl:when>
   	<xsl:when test="local-name()='dest'">
   		<xsl:copy>
-  			<xsl:apply-templates select="@*|node()" mode="copychecklist"/>
+  			<xsl:apply-templates select="@*" mode="copychecklist"/>
   			<xsl:choose><xsl:when test="$dest!=''"><xsl:value-of select="$dest"/></xsl:when><xsl:otherwise><xsl:value-of select="."/></xsl:otherwise></xsl:choose>
   		</xsl:copy>
   	</xsl:when>
