@@ -41,8 +41,11 @@ blank lines are not allowed in that case -->
   <!-- At the top of the checklist block you can specify parameters
        of the checklist as a whole. Specifically:
         * "clinfo", which identifies the checklist (usually the 
-          filename, followed by a version and a date).  -->
-  <clinfo>chxexample_V1.0_12/31/12</clinfo>
+          filename, followed by a version and a date).  
+
+        * clinfo should have a "type" attribute, either "experiment",
+          "simulation", "analysis", "preparation" or "documentation" -->
+  <clinfo type="documentation">chxexample_V1.0_12/31/12</clinfo>
   <!--  * "cltitle", title to be shown at the top of the checklist -->
   <cltitle>Example checklist</cltitle>
   <!--  * "specimen", which identifies which specimen this checklist is about. 
