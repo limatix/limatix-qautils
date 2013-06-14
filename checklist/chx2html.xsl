@@ -654,7 +654,7 @@ var saveAs = saveAs
 	var curdateobj=new Date();
 	
 	// curdateiso is a global!
-	curdateiso=curdateobj.getFullYear()+'-'+padtotwodigit(curdateobj.getMonth()+1)+'-'+curdateobj.getDate();
+	curdateiso=curdateobj.getFullYear()+'-'+padtotwodigit(curdateobj.getMonth()+1)+'-'+padtotwodigit(curdateobj.getDate());
 
 	processor.setParameter(null,"date",curdateiso);
 
@@ -1287,25 +1287,30 @@ while converting markup into the html namespace -->
 
 
 <!-- Next templates are used to copy the checklist into the DOM tree -->
+<!-- Next templates are used to copy the checklist into the DOM tree -->
 <xsl:template  match="@*|node()" mode="copychecklist">
   <xsl:choose>
   	<xsl:when test="local-name()='specimen'">
   		<xsl:copy>
+  			<xsl:apply-templates select="@*" mode="copychecklist"/>
   			<xsl:choose><xsl:when test="$specimen!=''"><xsl:value-of select="$specimen"/></xsl:when><xsl:otherwise><xsl:value-of select="."/></xsl:otherwise></xsl:choose>
   		</xsl:copy>
   	</xsl:when>
   	<xsl:when test="local-name()='perfby'">
   		<xsl:copy>
+  			<xsl:apply-templates select="@*" mode="copychecklist"/>
   			<xsl:choose><xsl:when test="$perfby!=''"><xsl:value-of select="$perfby"/></xsl:when><xsl:otherwise><xsl:value-of select="."/></xsl:otherwise></xsl:choose>
   		</xsl:copy>
   	</xsl:when>
   	<xsl:when test="local-name()='date'">
   		<xsl:copy>
+  			<xsl:apply-templates select="@*" mode="copychecklist"/>
   			<xsl:choose><xsl:when test="$date!=''"><xsl:value-of select="$date"/></xsl:when><xsl:otherwise><xsl:value-of select="."/></xsl:otherwise></xsl:choose>
   		</xsl:copy>
   	</xsl:when>
   	<xsl:when test="local-name()='dest'">
   		<xsl:copy>
+  			<xsl:apply-templates select="@*" mode="copychecklist"/>
   			<xsl:choose><xsl:when test="$dest!=''"><xsl:value-of select="$dest"/></xsl:when><xsl:otherwise><xsl:value-of select="."/></xsl:otherwise></xsl:choose>
   		</xsl:copy>
   	</xsl:when>
