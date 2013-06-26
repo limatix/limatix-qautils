@@ -33,6 +33,10 @@ blank lines are not allowed in that case -->
        notes field of the datacollect measurement, so that your 
        notes will be saved with the measurement.
 
+       You can provide a "scannedpdf" attribute to the checklist tag on 
+       a filled checklist. This attribute should have the path to the 
+       scanned PDF of a hand-filled paper checklist.  
+
        Please note that to use the dc: prefix you need to define the datacollect
        namespace in the checklist tag, e.g.
          xmlns:dc="http://thermal.cnde.iastate.edu/datacollect"

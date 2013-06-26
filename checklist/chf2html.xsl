@@ -33,6 +33,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 <xsl:param name="date"/>
 <xsl:param name="dest"/>
 
+<xsl:param name="rawlink_postfix"/> <!-- this is the postfix that should go on a relative URL to make a direct link to a raw file, e.g. "?mode=raw"-->
 
 <xsl:template match="/">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -101,20 +102,35 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 </table>
 
 <h1><xsl:value-of select="chx:cltitle"/></h1>
+<!-- embed scanned pdf if present-->
+<xsl:if test="string-length(@scannedpdf) &gt; 0">
+  <xsl:element name="object">
+    <xsl:attribute name="data"><xsl:value-of select="@scannedpdf"/><xsl:value-of select="$rawlink_postfix"/></xsl:attribute>
+    <xsl:attribute name="width">100%</xsl:attribute>
+    <xsl:attribute name="height">500</xsl:attribute>
+    <xsl:attribute name="type">application/pdf</xsl:attribute>
+  </xsl:element>
+</xsl:if>
+    <a>
+      <xsl:attribute name="href"><xsl:value-of select="@scannedpdf"/><xsl:value-of select="$rawlink_postfix"/></xsl:attribute>
+      Open PDF of filled checklist
+    </a>
+
 <table border="1">
 <xsl:apply-templates/>
 </table>
 
-<h2>Notes</h2>
-<textarea rows="6" cols="80" disabled="true" id="notes"><xsl:choose>
-    <xsl:when test="chx:notes=''">
-      <xsl:attribute name="style">border-color:red;border-style:ridge;border-weight:thick;</xsl:attribute>
-    </xsl:when>
-    <xsl:otherwise>
-      <xsl:attribute name="style">border-color:green;border-style:solid;border-weight:thin;</xsl:attribute>
-    </xsl:otherwise>
-  </xsl:choose><xsl:value-of select="chx:notes"/></textarea>
+<xsl:if test="@allchecked='true'">
+Header indicates all boxes checked. 
+</xsl:if>
 
+<xsl:if test="chx:notes != ''">
+  <h2>Notes</h2>
+  <textarea rows="6" cols="80" disabled="true" id="notes">
+    <xsl:attribute name="style">border-color:green;border-style:solid;border-weight:thin;</xsl:attribute>
+    <xsl:value-of select="chx:notes"/>
+  </textarea>
+</xsl:if>
 <h3>Checklist Log</h3>
 
       <table style="font-size:x-small;">

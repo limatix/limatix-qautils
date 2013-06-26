@@ -91,6 +91,7 @@
      \advance\c@app@runs\m@ne
   \repeat
   \app@convert{extralatex}{\jobname.\app@ext}{\app@jobname.dvi}%
+  \app@convert{extralatex}{\jobname.\app@ext}{\app@jobname.dvi}%
   \PackageWarning{auto-pst-pdf}{\app@nl Running latex... ^^JThis warning occured}
   \app@convert{latex}{\jobname.\app@ext}{\app@jobname.dvi}%
   \app@convert{dvips}{\app@jobname.dvi}{\app@jobname.ps}%

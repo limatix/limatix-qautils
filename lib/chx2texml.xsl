@@ -95,6 +95,14 @@ command:
 
 <xsl:template match="chx:checklist">
 
+<!-- TeXML automatically escapes underscores, but that screws things up
+     because the escaping would then make it through, possibly into the 
+     barcodes. Instead we make underscore a regular character, 
+     and then bypass the unescaping of the underscore by using the
+     "unescapeunderscore" template that replaces each underscore 
+     in the input with a <spec cat="sub"/> tag that generates a raw
+     underscore -->
+
 <!-- Make underscore a regular character -->
 <TeXML escape="0">
  \catcode`_=11   
@@ -107,13 +115,43 @@ command:
       </xsl:with-param>
     </xsl:call-template>
   </parm>
-  <parm><xsl:value-of select="chx:cltitle"/></parm>
+  <parm>
+    <xsl:call-template name="unescapeunderscore">
+      <xsl:with-param name="paramstr">
+        <xsl:value-of select="chx:cltitle"/>
+      </xsl:with-param>
+    </xsl:call-template>
+  </parm>
   <!-- These parameters can either be in the XML or provided as 
        XSLT parameters (we just concatenate assuming the other is empty) -->
-  <parm><xsl:value-of select="chx:specimen"/><xsl:value-of select="$specimen"/></parm>
-  <parm><xsl:value-of select="chx:perfby"/><xsl:value-of select="$perfby"/></parm>
-  <parm><xsl:value-of select="chx:date"/><xsl:value-of select="$date"/></parm>
-  <parm><xsl:value-of select="chx:dest"/><xsl:value-of select="$dest"/></parm>
+  <parm>
+    <xsl:call-template name="unescapeunderscore">
+      <xsl:with-param name="paramstr">
+        <xsl:value-of select="chx:specimen"/><xsl:value-of select="$specimen"/>
+      </xsl:with-param>
+    </xsl:call-template>
+  </parm>
+  <parm>
+    <xsl:call-template name="unescapeunderscore">
+      <xsl:with-param name="paramstr">
+        <xsl:value-of select="chx:perfby"/><xsl:value-of select="$perfby"/>
+      </xsl:with-param>
+    </xsl:call-template>
+  </parm>
+  <parm>
+    <xsl:call-template name="unescapeunderscore">
+      <xsl:with-param name="paramstr">
+        <xsl:value-of select="chx:date"/><xsl:value-of select="$date"/>
+      </xsl:with-param>
+    </xsl:call-template>
+  </parm>
+  <parm>
+    <xsl:call-template name="unescapeunderscore">
+      <xsl:with-param name="paramstr">
+        <xsl:value-of select="chx:dest"/><xsl:value-of select="$dest"/>
+      </xsl:with-param>
+    </xsl:call-template>
+  </parm>
 </cmd>
 <TeXML escape="0">
 \catcode`\_=8   % Make underscore special again
@@ -137,21 +175,21 @@ command:
     <!-- extract title from attribute + any text nodes within checkitem -->
     <xsl:value-of select="@title"/>
     <xsl:apply-templates mode="checkitemtitle"/>
-    <ctrl ch="\"/>  <!-- line-break -->
+    <ctrl ch=" "/>  <ctrl ch="\"/>  <!-- space followed by line-break -->
     <!-- extract description tags and description parameters -->
     <xsl:apply-templates select="chx:description" mode="descrmarkup"/>
     <xsl:apply-templates select="chx:parameter[@name='description']" mode="descrmarkup"/>
     <xsl:choose><xsl:when test="string-length(string(chx:parameter[@name='dg-command'])) > 0">
-      <ctrl ch="\"/>  <!-- line-break -->
+      <ctrl ch=" "/>  <ctrl ch="\"/>  <!-- space followed by line-break -->
       <group><cmd name="tt"/><xsl:value-of select="chx:parameter[@name='dg-command']"/></group>
     </xsl:when></xsl:choose>
     <xsl:choose><xsl:when test="string-length(string(chx:parameter[@name='dg-param'])) > 0">
-      <ctrl ch="\"/>  <!-- line-break -->
+      <ctrl ch=" "/>  <ctrl ch="\"/>  <!-- space followed by line-break -->
       <group><cmd name="tt"/><xsl:value-of select="chx:parameter[@name='dg-param']"/><xsl:value-of select="string(' ')"/><xsl:value-of select="chx:parameter[@name='dg-paramdefault']"/></group>
     </xsl:when></xsl:choose>
     <xsl:if test="@class='textentry'">
       <!-- insert line where text should ae written -->
-      <ctrl ch="\"/> <!-- line break -->
+      <ctrl ch=" "/>  <ctrl ch="\"/>  <!-- space followed by line-break -->
       <cmd name="vspace">
 	<parm>.3in</parm>
       </cmd>
@@ -168,7 +206,7 @@ command:
 
     <xsl:if test="@class='textgraphic'">
       <!-- insert graphic -->
-      <ctrl ch="\"/> <!-- line break -->
+      <ctrl ch=" "/>  <ctrl ch="\"/>  <!-- space followed by line-break -->
       <cmd name="includegraphics">
 	<xsl:if test="count(chx:parameter[@name='width']) &gt; 0">
 	  <opt>width=<xsl:value-of select="chx:parameter[@name='width']"/>pt</opt>	  

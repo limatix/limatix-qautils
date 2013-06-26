@@ -79,7 +79,9 @@
 {\Large \bf #2 \\ {\normalsize \tt (#1)}}
 
 %\newcommand{\MyLastPage}{\pageref{LastPage}}
-\edef\MyLastPage{\@ifundefined{lastpage@lastpage}{}{\lastpage@lastpage}}
+\newcommand{\MyLastPage}{\@ifundefined{r@LastPage}{}{\expandafter\@secondoftwo\r@LastPage}}
+%\newcommand{\MyLastPage}{\expandafter\@setref\csname r@LastPage\endcsname \@secondoftwo{LastPage}}}
+%\edef\MyLastPage{\@ifundefined{lastpage@lastpage}{}{\lastpage@lastpage}}
 
 
 \sbox{\CLINFO}{\checklistheaderitem{Checklist}{<clinfo>}{#1}{</clinfo>}}
