@@ -62,6 +62,10 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
   </td>
 </xsl:template>
 
+<xsl:template match="chx:rationale">
+  <!-- empty template... rationale is uplled out separately -->
+</xsl:template>
+
 <xsl:template match="chx:checklist">
 <form>
 <table id="headingtable" width="100%">
@@ -100,8 +104,14 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 
   </tr>
 </table>
-
 <h1><xsl:value-of select="chx:cltitle"/></h1>
+<xsl:if test="string-length(chx:rationale) &gt; 0">
+  <h2>Rationale</h2>
+  <p>
+    <xsl:apply-templates select="chx:rationale" mode="copydescr"/> <!-- mode==copydescr converts namespace of markup tags to xhtml -->
+  </p>
+</xsl:if>
+
 <!-- embed scanned pdf if present-->
 <xsl:if test="string-length(@scannedpdf) &gt; 0">
   <xsl:element name="object">

@@ -18,6 +18,8 @@ blank lines are not allowed in that case -->
 <!-- The main tag of "checklist" surrounds the entire contents of the 
      .chx file. You can optionally give it an attribute of "filled", which
      should be "true", "false", or blank (assumed false) 
+     The "done" attribute may be set to "true" once the user has 
+     marked the checklist as complete. 
 
      the xmlns attributes are REQUIRED and must match exactly.
 
@@ -25,7 +27,7 @@ blank lines are not allowed in that case -->
      with whether all boxes are checked, or remove it entirely
 -->
 
-<checklist xmlns="http://thermal.cnde.iastate.edu/checklist" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" filled="false" allchecked="false">
+<checklist xmlns="http://thermal.cnde.iastate.edu/checklist" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" filled="false" allchecked="false" done="false">
   <!-- if this is a datacollect checklist you can put a 
        dc:done_is_save_measurement="true" attribute in the <checklist> tag
        to have datacollect turn the done button to a "Save measurement" button.
@@ -48,7 +50,7 @@ blank lines are not allowed in that case -->
           filename, followed by a version and a date).  
 
         * clinfo should have a "type" attribute, either "experiment",
-          "simulation", "analysis", "preparation" or "documentation" -->
+          "simulation", "analysis", "preparation", "documentation", or "plan" -->
   <clinfo type="documentation">chxexample_V1.0_12/31/12</clinfo>
   <!--  * "cltitle", title to be shown at the top of the checklist -->
   <cltitle>Example checklist</cltitle>
@@ -96,6 +98,10 @@ blank lines are not allowed in that case -->
   -->
 
   <dest reset="false" autofilename="concat('chxexample_',chx:specimen,'_',chx:date,'.chf')">examples</dest>
+
+  <!-- optional rationale for the steps involved -->
+  <rationale>This is the rationale... <i>simple markup may be used (same rules as for a textentry, below.</i></rationale>
+
 
   <!-- The bulk of the checklist file is a sequence of "checkitem" tags -->
   <!-- The checkitem tag has two forms: Simplified or Full -->

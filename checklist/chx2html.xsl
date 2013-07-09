@@ -1092,6 +1092,10 @@ var saveAs = saveAs
   </td>
 </xsl:template>
 
+<xsl:template match="chx:rationale">
+  <!-- empty template... rationale is uplled out separately -->
+</xsl:template>
+
 <xsl:template match="chx:checklist">
 <form>
 <table id="headingtable" width="100%">
@@ -1132,6 +1136,13 @@ var saveAs = saveAs
 </table>
 
 <h1><xsl:value-of select="chx:cltitle"/></h1>
+<xsl:if test="string-length(chx:rationale) &gt; 0">
+  <h2>Rationale</h2>
+  <p>
+    <xsl:apply-templates select="chx:rationale" mode="copydescr"/> <!-- mode==copydescr converts namespace of markup tags to xhtml -->
+  </p>
+</xsl:if>
+
 <table border="1">
 <xsl:apply-templates/>
 </table>
