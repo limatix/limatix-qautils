@@ -120,11 +120,11 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
     <xsl:attribute name="height">500</xsl:attribute>
     <xsl:attribute name="type">application/pdf</xsl:attribute>
   </xsl:element>
+  <a>
+    <xsl:attribute name="href"><xsl:value-of select="@scannedpdf"/><xsl:value-of select="$rawlink_postfix"/></xsl:attribute>
+    Open PDF of filled checklist
+  </a>
 </xsl:if>
-    <a>
-      <xsl:attribute name="href"><xsl:value-of select="@scannedpdf"/><xsl:value-of select="$rawlink_postfix"/></xsl:attribute>
-      Open PDF of filled checklist
-    </a>
 
 <table border="1">
 <xsl:apply-templates/>
