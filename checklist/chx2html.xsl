@@ -806,12 +806,13 @@ var saveAs = saveAs
 		// Get a Timestamp
 		var timestamp = getisotimestamp();
 		// Set Log Status Message
-		logmessage = "Text Field " + textentry.getAttribute("id") + " on Item " + String(numberstring) + " Updated";
+		logmessage = "Text Field on Item " + String(numberstring) + " Updated";
 		// Append to Log
 		logentry = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","logentry");
 		logentry.setAttribute("timestamp", timestamp);
-		logentry.setAttribute("item", numberstring)
-		logentry.setAttribute("action", "updatetext")
+		logentry.setAttribute("item", numberstring);
+		logentry.setAttribute("action", "updatetext");
+		logentry.setAttribute("value",textentry.value);
 		logentrytext = checklistxml.createTextNode(logmessage);
 		logentry.appendChild(logentrytext);
 		log.appendChild(logentry);
@@ -840,8 +841,9 @@ var saveAs = saveAs
 		// Append to Log
 		logentry = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","logentry");
 		logentry.setAttribute("timestamp", timestamp);
-		logentry.setAttribute("action", "updatetext")                
-		logentry.setAttribute("item", "notes")
+		logentry.setAttribute("action", "updatetext");
+		logentry.setAttribute("item", "notes");
+		logentry.setAttribute("value",notesarea.value);
 		logentrytext = checklistxml.createTextNode(logmessage);
 		logentry.appendChild(logentrytext);
 		log.appendChild(logentry);
@@ -949,6 +951,8 @@ var saveAs = saveAs
 		logentry.setAttribute("timestamp", timestamp);
 		logentry.setAttribute("action", "updatetext")
 		logentry.setAttribute("item", textinput.getAttribute("name"))
+		logentry.setAttribute("value",textinput.value);
+
 		logentrytext = checklistxml.createTextNode(logmessage);
 		logentry.appendChild(logentrytext);
 		log.appendChild(logentry);
