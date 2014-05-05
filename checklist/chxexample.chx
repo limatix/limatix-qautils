@@ -107,6 +107,7 @@ blank lines are not allowed in that case -->
   <!-- The checkitem tag has two forms: Simplified or Full -->
 
   <!-- Simplfied form: Just place the title of this item within "checkitem" tags -->
+  <!-- IMPORTANT NOTE: Titles should be unique within the checklist -->
   <checkitem>Perform the checklist</checkitem>
 
   <!-- You can also place a more detailed description in a "description" tag
