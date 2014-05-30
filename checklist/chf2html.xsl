@@ -71,7 +71,9 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 <table id="headingtable" width="100%">
   <tr>
     <th>Checklist</th>
-    <th>Specimen</th>
+    <xsl:if test="string(chx:specimen) != 'disabled'"> 
+      <th>Specimen</th>
+    </xsl:if>
     <th>Performed by</th>
     <th>Date</th>
     <th>Destination</th>
@@ -82,11 +84,12 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
       <xsl:with-param name="fieldval"><xsl:value-of select="chx:clinfo"/></xsl:with-param>
     </xsl:call-template>
 
-    <xsl:call-template name="headertd">
-      <xsl:with-param name="fieldname">specimen</xsl:with-param>
-      <xsl:with-param name="fieldval"><xsl:value-of select="chx:specimen"/></xsl:with-param>
-    </xsl:call-template>
-
+    <xsl:if test="string(chx:specimen) != 'disabled'"> 
+      <xsl:call-template name="headertd">
+        <xsl:with-param name="fieldname">specimen</xsl:with-param>
+	<xsl:with-param name="fieldval"><xsl:value-of select="chx:specimen"/></xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
     <xsl:call-template name="headertd">
       <xsl:with-param name="fieldname">perfby</xsl:with-param>
       <xsl:with-param name="fieldval"><xsl:value-of select="chx:perfby"/></xsl:with-param>

@@ -57,7 +57,11 @@ blank lines are not allowed in that case -->
   <!--  * "specimen", which identifies which specimen this checklist is about. 
           There can be an optional "reset" attribute which can be "true" or 
           "false" to indicate whether the specimen box should be cleared
-          when the checklist is reset -->
+          when the checklist is reset 
+        * <specimen> can have the special value "disabled", which hides the
+          entry box and (in the datacollect2 implementation) ignores
+          the barcode reader
+  -->
   <specimen reset="false">12-12345</specimen>
   <!--  * "perfby", Name of person performing checklist -->
   <perfby>Holland</perfby>

@@ -1132,7 +1132,9 @@ var saveAs = saveAs
 <table id="headingtable" width="100%">
   <tr>
     <th>Checklist</th>
-    <th>Specimen</th>
+    <xsl:if test="string(chx:specimen) != 'disabled'"> 
+      <th>Specimen</th>
+    </xsl:if>
     <th>Performed by</th>
     <th>Date</th>
     <th>Destination</th>
@@ -1143,11 +1145,13 @@ var saveAs = saveAs
       <xsl:with-param name="fieldval"><xsl:value-of select="chx:clinfo"/></xsl:with-param>
     </xsl:call-template>
 
-    <xsl:call-template name="headertd">
-      <xsl:with-param name="fieldname">specimen</xsl:with-param>
-      <xsl:with-param name="fieldval"><xsl:choose><xsl:when test="$specimen!=''"><xsl:value-of select="$specimen"/></xsl:when><xsl:otherwise><xsl:value-of select="chx:specimen"/></xsl:otherwise></xsl:choose></xsl:with-param>
-    </xsl:call-template>
-
+    <xsl:if test="string(chx:specimen) != 'disabled'"> 
+      <xsl:call-template name="headertd">
+	<xsl:with-param name="fieldname">specimen</xsl:with-param>
+	<xsl:with-param name="fieldval"><xsl:choose><xsl:when test="$specimen!=''"><xsl:value-of select="$specimen"/></xsl:when><xsl:otherwise><xsl:value-of select="chx:specimen"/></xsl:otherwise></xsl:choose></xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+    
     <xsl:call-template name="headertd">
       <xsl:with-param name="fieldname">perfby</xsl:with-param>
       <xsl:with-param name="fieldval"><xsl:choose><xsl:when test="$perfby!=''"><xsl:value-of select="$perfby"/></xsl:when><xsl:otherwise><xsl:value-of select="chx:perfby"/></xsl:otherwise></xsl:choose></xsl:with-param>
