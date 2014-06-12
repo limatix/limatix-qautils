@@ -57,7 +57,11 @@ blank lines are not allowed in that case -->
   <!--  * "specimen", which identifies which specimen this checklist is about. 
           There can be an optional "reset" attribute which can be "true" or 
           "false" to indicate whether the specimen box should be cleared
-          when the checklist is reset -->
+          when the checklist is reset 
+        * <specimen> can have the special value "disabled", which hides the
+          entry box and (in the datacollect2 implementation) ignores
+          the barcode reader
+  -->
   <specimen reset="false">12-12345</specimen>
   <!--  * "perfby", Name of person performing checklist -->
   <perfby>Holland</perfby>
@@ -65,7 +69,7 @@ blank lines are not allowed in that case -->
                   can also be a full iso8601 timestamp -->
   <!-- Leave out the date tag entirely in a .chx file so it will be 
        auto-filled -->
-  <date>2012-12-31</date>
+  <date></date><!-- date is of form 2012-12-31-->
   <!--  * "dest", Destination folder, if automated disposition is desired 
           There can be an optional "reset" attribute which can be "true" or 
           "false" to indicate whether the dest box should be cleared
@@ -107,6 +111,7 @@ blank lines are not allowed in that case -->
   <!-- The checkitem tag has two forms: Simplified or Full -->
 
   <!-- Simplfied form: Just place the title of this item within "checkitem" tags -->
+  <!-- IMPORTANT NOTE: Titles should be unique within the checklist -->
   <checkitem>Perform the checklist</checkitem>
 
   <!-- You can also place a more detailed description in a "description" tag
@@ -184,5 +189,13 @@ blank lines are not allowed in that case -->
   <!-- There can also be a <notes> </notes> field here that should store
   written notes from when the checklist was filled out 
   -->
+
+  <!-- There can be a <log> </log> section with a log of changes to the checklist -->
+  <log>
+    <!-- The <log> section contains <logentry> tags, e.g.  -->
+    <logentry timestamp="2013-08-01T12:32:38-0500" item="1" action="checked">Item 1 marked complete</logentry>
+    <logentry timestamp="2013-08-01T12:45:57-0500" item="4" action="updatetext" value="new_text">Text Field on Item 4 Updated</logentry>
+
+  </log>
 
 </checklist>
