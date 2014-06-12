@@ -207,16 +207,24 @@ command:
     <xsl:if test="@class='textgraphic'">
       <!-- insert graphic -->
       <ctrl ch=" "/>  <ctrl ch="\"/>  <!-- space followed by line-break -->
+<TeXML escape="0">\catcode`_=11</TeXML>
       <cmd name="includegraphics">
 	<xsl:if test="count(chx:parameter[@name='width']) &gt; 0">
 	  <opt>width=<xsl:value-of select="chx:parameter[@name='width']"/>pt</opt>	  
 	</xsl:if>
 	<parm>
-	  <xsl:call-template name="trimspaces">
-	    <xsl:with-param name="str"><xsl:value-of select="chx:parameter[@name='image']"/></xsl:with-param>
+    <xsl:call-template name="unescapeunderscore">
+      <xsl:with-param name="paramstr">
+        <xsl:call-template name="trimspaces">
+          <xsl:with-param name="str">
+             <xsl:value-of select="chx:parameter[@name='image']"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:with-param>
 	  </xsl:call-template>
 	</parm>
       </cmd>
+<TeXML escape="0">\catcode`\_=8</TeXML>
     </xsl:if>
 
 </xsl:template>
