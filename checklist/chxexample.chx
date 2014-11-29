@@ -191,7 +191,7 @@ blank lines are not allowed in that case -->
   -->
 
   <!-- There can be a <log> </log> section with a log of changes to the checklist -->
-  <log>
+  <log starttimestamp="2013-08-01T12:31:00-0500"> <!-- starttimestamp says when the checklist was started -->
     <!-- The <log> section contains <logentry> tags, e.g.  -->
     <logentry timestamp="2013-08-01T12:32:38-0500" item="1" action="checked">Item 1 marked complete</logentry>
     <logentry timestamp="2013-08-01T12:45:57-0500" item="4" action="updatetext" value="new_text">Text Field on Item 4 Updated</logentry>
