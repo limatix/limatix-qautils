@@ -21,19 +21,25 @@ blank lines are not allowed in that case -->
      The "done" attribute may be set to "true" once the user has 
      marked the checklist as complete. 
 
+
      the xmlns attributes are REQUIRED and must match exactly.
 
      Tools should either keep the allchecked attribute in sync 
      with whether all boxes are checked, or remove it entirely
 -->
 
-<checklist xmlns="http://thermal.cnde.iastate.edu/checklist" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" filled="false" allchecked="false" done="false">
+<checklist xmlns="http://thermal.cnde.iastate.edu/checklist" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" xmlns:xlink="http://www.w3.org/1999/xlink" filled="false" allchecked="false" done="false">
   <!-- if this is a datacollect checklist you can put a 
        dc:done_is_save_measurement="true" attribute in the <checklist> tag
        to have datacollect turn the done button to a "Save measurement" button.
        This also automatically syncs the <notes> tag of the checklist with the 
        notes field of the datacollect measurement, so that your 
        notes will be saved with the measurement.
+
+       You can also put a dc:part_of_a_measurement="true" attribute in the 
+       <checklist> tag, which will make datacollect number the checklist 
+       according to the datacollect measnum rather than having its own 
+       number count. 
 
        You can provide a "scannedpdf" attribute to the checklist tag on 
        a filled checklist. This attribute should have the path to the 
@@ -62,6 +68,14 @@ blank lines are not allowed in that case -->
           entry box and (in the datacollect2 implementation) ignores
           the barcode reader
   -->
+  <!-- 
+     In addition you can include a "chx:parent" tag which has
+     an xlink:href attribute which is a 
+     relative path (or perhaps url reference) to the parent 
+     checklist that triggered this checklist. The "chx:parent"
+     tag should also have an xlink:arcrole attribute with the
+     value "http://thermal.cnde.iastate.edu/linktoparent"
+  -->
   <specimen reset="false">12-12345</specimen>
   <!--  * "perfby", Name of person performing checklist -->
   <perfby>Holland</perfby>
@@ -70,6 +84,10 @@ blank lines are not allowed in that case -->
   <!-- Leave out the date tag entirely in a .chx file so it will be 
        auto-filled -->
   <date></date><!-- date is of form 2012-12-31-->
+
+  <!--dc:measnum is used within datacollect to record the measurement number(s) that correspond to checklists that contain save measurement step(s), done_is_save_button and/or part_of_a_checklist 
+  <dc:measnum xmlns:dc="http://thermal.cnde.iastate.edu/datacollect">5;6</dc:measnum>  -->
+
   <!--  * "dest", Destination folder, if automated disposition is desired 
           There can be an optional "reset" attribute which can be "true" or 
           "false" to indicate whether the dest box should be cleared
