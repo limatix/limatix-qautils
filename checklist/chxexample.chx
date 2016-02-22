@@ -119,7 +119,7 @@ blank lines are not allowed in that case -->
 
   -->
 
-  <dest reset="false" autofilename="concat('chxexample_',chx:specimen,'_',chx:date,'.chf')">examples</dest>
+  <dest reset="false" autofilename="concat('chxexample_',chx:specimen,'_',chx:date,'.chf')" xlink:href="examples/"/>
 
   <!-- optional rationale for the steps involved -->
   <rationale>This is the rationale... <i>simple markup may be used (same rules as for a textentry, below.</i></rationale>
@@ -145,51 +145,55 @@ blank lines are not allowed in that case -->
   <!-- Full form: The title goes in a "title" attribute"; a "class"
                   attribute can specify how this checklist
 		  item should be interpreted/rendered. Also 
-		  additional "parameter" tags with more information can be 
+		  additional parameter tags with more information
+		  according to the needs of aparticular class
+		  of step can be 
 		  nested within the "checkitem" tag -->
   <checkitem class="text" title="Perform the checklist a third time">
-    <parameter type="str" name="description">
+    <description>
       Repeating the checklist again is probably a waste of time but 
       we do it anyway 
-    </parameter>
+    </description>
   </checkitem>
 
   <!-- Text entry fields can also be specified -->
   <checkitem class="textentry" title="This is an example text entry">
-    <parameter type="str" name="description">
+    <description>
       This is a handy place to write a more detailed description of the
       text and what should be entered. You can use simple <i>HTML</i> markup:
       &lt;b&gt;<b>bold</b>&lt;/b&gt;, &lt;i&gt;<i>italic</i>&lt;/i&gt;, &lt;sub&gt;<sub>subscript</sub>&lt;/sub&gt;, &lt;sup&gt;<sup>superscript</sup>&lt;/sup&gt;, &lt;tt&gt;<tt>typewriter</tt>&lt;tt&gt;, &lt;s&gt;<s>strikeout</s>&lt;/s&gt;, &lt;u&gt;<u>underline</u>&lt;/u&gt;, and &lt;br/&gt; (linebreak).<br/><br/>
 <b>Note: Do not put a space immediately after the linebreak (but a CR/newline is OK)</b>
 
-    </parameter>
-    <parameter type="str" name="initialtext">
+    </description>
+    <initialtext>
       Initial text in the entry box (to be placed there on reset)
-    </parameter>
-    <parameter type="str" name="text">
+    </initialtext>
+    <text>
       Actual text entered
-    </parameter>
-    <parameter type="int" name="width">
+    </text>
+    <width>
       <!-- Requested minimum text box width, in characters -->
       40
-    </parameter>
+    </width>
   </checkitem>
 
   <!-- textgraphic fields can also be specified -->
+  <!-- In this case, an alternate form is illustrated where
+       instead of using a <description> tag you use a
+       <parameter name="description"> tag. Otherwise it
+       works identically -->
   <checkitem class="textgraphic" title="This is an example text graphic step">
-    <parameter type="str" name="description">
+    <parameter name="description">
       You can provide an image as well to support the step's text using
       the "textgraphic" class. 
     </parameter>
 
     <!-- Can explictly set the width in pixels of the graphic so that it will be scaled to the correct size -->
-    <parameter type="float" name="width">
+    <parameter name="width">
       160
     </parameter>
     <!-- use png or jpg images -->
-    <parameter type="str" name="image">
-      chxexampleimg.png
-    </parameter>
+    <image xlink:href="chxexampleimg.png"/>
   </checkitem>
 
   <!-- checklists designed to integrate with dataguzzler using the 

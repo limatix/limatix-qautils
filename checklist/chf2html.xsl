@@ -25,7 +25,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 
 -->
 
-<xsl:stylesheet version="1.0" xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" exclude-result-prefixes="#default">
+<xsl:stylesheet version="1.0" xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" xmlns:xlink="http://www.w3.org/1999/xlink" exclude-result-prefixes="#default">
 <xsl:output method="xml" version="1.0" media-type="application/xhtml+xml" encoding="UTF-8" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
 <xsl:param name="specimen"/>
@@ -216,15 +216,15 @@ Header indicates all boxes checked.
       <xsl:if test="@class='textentry'">
 	<td style="text-align: right;">
           <input type="text">
-    	    <xsl:if test="count(chx:parameter[@name='width']) > 0">
-	      <xsl:attribute name="size"><xsl:value-of select="chx:parameter[@name='width']"/></xsl:attribute>
+    	    <xsl:if test="count(chx:parameter[@name='width']|chx:width) > 0">
+	      <xsl:attribute name="size"><xsl:value-of select="chx:parameter[@name='width']|chx:width"/></xsl:attribute>
             </xsl:if>
 	    <xsl:attribute name="id">textentry<xsl:number/></xsl:attribute>
 	    <xsl:attribute name="value">
-	      <xsl:choose><xsl:when test="count(chx:parameter[@name='text']) &gt; 0">
-		<xsl:value-of select="normalize-space(chx:parameter[@name='text'])"/>
+	      <xsl:choose><xsl:when test="count(chx:parameter[@name='text']|chx:text) &gt; 0">
+		<xsl:value-of select="normalize-space(chx:parameter[@name='text']|chx:text)"/>
 	      </xsl:when><xsl:otherwise>
-		<xsl:value-of select="normalize-space(chx:parameter[@name='initialtext'])"/>
+		<xsl:value-of select="normalize-space(chx:parameter[@name='initialtext']|chx:initialtext)"/>
 	      </xsl:otherwise></xsl:choose>
 	    </xsl:attribute>
 	    <xsl:attribute name="disabled">true</xsl:attribute>
@@ -238,7 +238,7 @@ Header indicates all boxes checked.
 	<xsl:variable name="src">
 	      <xsl:call-template name="trimspaces">
 		<xsl:with-param name="str">
-		  <xsl:value-of select="normalize-space(chx:parameter[@name='image'])"/>
+		  <xsl:value-of select="(chx:parameter[@name='image']|chx:image)/@xlink:href"/>
 		</xsl:with-param>
 	      </xsl:call-template>	  
 	</xsl:variable>
@@ -250,9 +250,9 @@ Header indicates all boxes checked.
 	    <xsl:attribute name="alt">
 	      <xsl:value-of select="$src"/>	      
 	    </xsl:attribute>
-	    <xsl:if test="count(chx:parameter[@name='width']) &gt; 0">
+	    <xsl:if test="count(chx:parameter[@name='width']|chx:width) &gt; 0">
 	      <xsl:attribute name="width">
-		<xsl:value-of select="round(chx:parameter[@name='width'])"/>
+		<xsl:value-of select="round(chx:parameter[@name='width']|chx:width)"/>
 	      </xsl:attribute>
 	    </xsl:if>
 	  </img>

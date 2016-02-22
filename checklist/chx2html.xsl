@@ -25,7 +25,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 
 -->
 
-<xsl:stylesheet version="1.0" xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" exclude-result-prefixes="#default">
+<xsl:stylesheet version="1.0" xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" xmlns:xlink="http://www.w3.org/1999/xlink"  exclude-result-prefixes="#default">
 <xsl:output method="xml" version="1.0" media-type="application/xhtml+xml" encoding="UTF-8" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
 <xsl:param name="specimen"/>
@@ -805,7 +805,7 @@ var saveAs = saveAs
       }
 
       function textentrychanged(textentry,numberstring) {
-        var xmlitemtext=checklistxml.evaluate("chx:checklist/chx:checkitem[@checkitemnum=\""+numberstring+"\"]/chx:parameter[@name=\"text\"]",checklistxml,nsresolver,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue;
+        var xmlitemtext=checklistxml.evaluate("chx:checklist/chx:checkitem[@checkitemnum=\""+numberstring+"\"]/chx:parameter[@name=\"text\"]|chx:checklist/chx:checkitem[@checkitemnum=\""+numberstring+"\"]/chx:text",checklistxml,nsresolver,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue;
 	xmlitemtext.textContent=textentry.value;
 	// Get Handle to Log
 	log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log")[0];
@@ -1014,7 +1014,7 @@ var saveAs = saveAs
 
 	  var initialtext=""
 	  try {
-  	    initialtext=checklistxml.evaluate("normalize-space(chx:checklist/chx:checkitem[@checkitemnum='" + textentrynums.snapshotItem(i).textContent  + "']/chx:parameter[@name='initialtext'])",checklistxml,nsresolver,XPathResult.STRING_TYPE,null).stringValue;
+  	    initialtext=checklistxml.evaluate("normalize-space(chx:checklist/chx:checkitem[@checkitemnum='" + textentrynums.snapshotItem(i).textContent  + "']/chx:parameter[@name='initialtext']|chx:checklist/chx:checkitem[@checkitemnum='" + textentrynums.snapshotItem(i).textContent  + "']/chx:initialtext)",checklistxml,nsresolver,XPathResult.STRING_TYPE,null).stringValue;
 	    initialtext=initialtextentry.textContent
           }
           catch(e) {
@@ -1166,7 +1166,7 @@ var saveAs = saveAs
 
     <xsl:call-template name="headertd">
       <xsl:with-param name="fieldname">dest</xsl:with-param>
-      <xsl:with-param name="fieldval"><xsl:choose><xsl:when test="$dest!=''"><xsl:value-of select="$dest"/></xsl:when><xsl:otherwise><xsl:value-of select="chx:dest"/></xsl:otherwise></xsl:choose></xsl:with-param>
+      <xsl:with-param name="fieldval"><xsl:choose><xsl:when test="$dest!=''"><xsl:value-of select="$dest"/></xsl:when><xsl:otherwise><xsl:value-of select="chx:dest/@xlink:href"/></xsl:otherwise></xsl:choose></xsl:with-param>
     </xsl:call-template>
 
   </tr>
@@ -1234,15 +1234,15 @@ var saveAs = saveAs
       <xsl:if test="@class='textentry'">
 	<td style="text-align: right;">
           <input type="text">
-    	    <xsl:if test="count(chx:parameter[@name='width']) > 0">
-	      <xsl:attribute name="size"><xsl:value-of select="chx:parameter[@name='width']"/></xsl:attribute>
+    	    <xsl:if test="count(chx:parameter[@name='width']|chx:width) > 0">
+	      <xsl:attribute name="size"><xsl:value-of select="chx:parameter[@name='width']|chx:width"/></xsl:attribute>
             </xsl:if>
 	    <xsl:attribute name="id">textentry<xsl:number/></xsl:attribute>
 	    <xsl:attribute name="value">
-	      <xsl:choose><xsl:when test="count(chx:parameter[@name='text']) &gt; 0">
-		<xsl:value-of select="normalize-space(chx:parameter[@name='text'])"/>
+	      <xsl:choose><xsl:when test="count(chx:parameter[@name='text']|chx:text) &gt; 0">
+		<xsl:value-of select="normalize-space(chx:parameter[@name='text']|chx:text)"/>
 	      </xsl:when><xsl:otherwise>
-		<xsl:value-of select="normalize-space(chx:parameter[@name='initialtext'])"/>
+		<xsl:value-of select="normalize-space(chx:parameter[@name='initialtext']|chx:initialtext)"/>
 	      </xsl:otherwise></xsl:choose>
 	    </xsl:attribute>
 	    <xsl:attribute name="onchange">textentrychanged(this,"<xsl:number/>");</xsl:attribute>	  
@@ -1255,7 +1255,7 @@ var saveAs = saveAs
 	<xsl:variable name="src">
 	      <xsl:call-template name="trimspaces">
 		<xsl:with-param name="str">
-		  <xsl:value-of select="normalize-space(chx:parameter[@name='image'])"/>
+		  <xsl:value-of select="(chx:parameter[@name='image']|chx:image)/@xlink:href"/>
 		</xsl:with-param>
 	      </xsl:call-template>	  
 	</xsl:variable>
@@ -1267,9 +1267,9 @@ var saveAs = saveAs
 	    <xsl:attribute name="alt">
 	      <xsl:value-of select="$src"/>	      
 	    </xsl:attribute>
-	    <xsl:if test="count(chx:parameter[@name='width']) &gt; 0">
+	    <xsl:if test="count(chx:parameter[@name='width']|chx:width) &gt; 0">
 	      <xsl:attribute name="width">
-		<xsl:value-of select="round(chx:parameter[@name='width'])"/>
+		<xsl:value-of select="round(chx:parameter[@name='width']|chx:width)"/>
 	      </xsl:attribute>
 	    </xsl:if>
 	  </img>
@@ -1358,8 +1358,9 @@ while converting markup into the html namespace -->
   	</xsl:when>
   	<xsl:when test="local-name()='dest'">
   		<xsl:copy>
-  			<xsl:apply-templates select="@*" mode="copychecklist"/>
-  			<xsl:choose><xsl:when test="$dest!=''"><xsl:value-of select="$dest"/></xsl:when><xsl:otherwise><xsl:value-of select="."/></xsl:otherwise></xsl:choose>
+  			<xsl:apply-templates select="@reset|@autofilename|@autodcfilename" mode="copychecklist"/>
+  			<xsl:choose><xsl:when test="$dest!=''">
+			<xsl:attribute name="xlink:href"><xsl:value-of select="$dest"/></xsl:attribute></xsl:when><xsl:otherwise><xsl:attribute name="xlink:href"><xsl:value-of select="@xlink:href"/></xsl:attribute></xsl:otherwise></xsl:choose>
   		</xsl:copy>
   	</xsl:when>
   	<xsl:otherwise>
