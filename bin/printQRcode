@@ -85,6 +85,12 @@ template=r"""\documentclass{article}
 \setlength{\pdfpageheight}{23mm}
 \renewcommand{\baselinestretch}{.90}
 
+%% word wrapping of continuous text, from http://www.latex-community.org/forum/viewtopic.php?f=44&t=3798:
+\makeatletter
+\newcommand*\wrapletters[1]{\wr@pletters#1\@nil}
+\def\wr@pletters#1#2\@nil{#1\allowbreak\if&#2&\else\wr@pletters#2\@nil\fi}
+\makeatother
+
 %% This file is good for a tag + value,... roughly 8 character tag name + punctuation
 %% plus 15 character content 
 
@@ -96,7 +102,7 @@ template=r"""\documentclass{article}
 \end{pspicture} 
 \vspace{-2.5mm} \\
 \hspace*{0.12in}\parbox[t]{.74in}{
-\scriptsize \tt %s %s}
+\scriptsize \tt \wrapletters{%s %s}}
 \end{textblock*}
 
 \end{document}
