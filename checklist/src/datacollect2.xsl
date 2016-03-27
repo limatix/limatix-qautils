@@ -1,3 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+
+Run this stylesheet with firefox by adding an xml-stylesheet processing 
+instruction to the .chx file. It does not work properly if html is
+generated as an intermediate because of some of the bizarre things
+that happen when html is parsed by a browser. 
+
+in order to view with Chrome/Chromium, you must close all
+chrome/chromium windows and restart it with the 
+  allow-file-access-from-files parameter, e.g.
+ 
+  chromium-browser  - - allow-file-access-from-files 
+   (remove the excess spaces between the minus signs and before 'a')
+
+  In windows this can be done using a shortcut
+
+
+Generating html can still be useful for debugging, for example to get line numbers
+
+To do this temporarily change disable-output-escaping to "yes" in xsl:text 
+below. Then run: 
+xsltproc chx2html.xsl myfile.chx > myfile.html
+
+-->
+
+<xsl:stylesheet version="1.0" xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" xmlns:dc="http://thermal.cnde.iastate.edu/datacollect" xmlns:dcv="http://thermal.cnde.iastate.edu/dcvalue" xmlns:xlink="http://www.w3.org/1999/xlink" >
+
 <!-- *** Begin datacollect XML representation *** -->
 <!-- *** Must keep this set of templates synchronized between
      chx2html.xsl, chf2html.xsl, and databrowse -->
@@ -332,3 +361,5 @@
 
 
 <!-- *** End datacollect XML representation *** -->
+
+</xsl:stylesheet>

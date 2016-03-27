@@ -1193,7 +1193,7 @@ var saveAs = saveAs
 </form>
 </xsl:template>
 
-<xi:include href="datacollect2.xsl" />
+<xi:include href="datacollect2.xsl" xpointer="xpointer(/xsl:stylesheet/*)" />
 
 <xsl:template match="chx:checkitem">
   <xsl:variable name="title">
