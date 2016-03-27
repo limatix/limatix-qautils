@@ -7,7 +7,7 @@ all:
 	@for i in $(SUBDIRS) ; do if [ -d $$i ] && [ -f $$i/Makefile ] ; then $(MAKE) $(MFLAGS) -C $$i ; fi done
 
 clean: 
-        @for i in $(SUBDIRS) ; do if [ -d $$i ] && [ -f $$i/Makefile ] ; then $(MAKE) $(MFLAGS) -C $$i clean ; fi done
+	@for i in $(SUBDIRS) ; do if [ -d $$i ] && [ -f $$i/Makefile ] ; then $(MAKE) $(MFLAGS) -C $$i clean ; fi done
 	rm -f `find . -name "*~"`
 	rm -f `find . -name "*.swp"`
 	rm -f `find . -name "*.bak"` 
