@@ -158,7 +158,7 @@ Header indicates all boxes checked.
 </form>
 </xsl:template>
 
-<xi:include href="datacollect2.xsl" xpointer="xpointer(/xsl:stylesheet/*)" />
+<xi:include href="datacollect2.xsl" xpointer="xmlns(xsl=http://www.w3.org/1999/XSL/Transform) xpointer(/xsl:stylesheet/node())" />
 
 <xsl:template match="chx:checkitem">
   <xsl:variable name="number"><xsl:number/></xsl:variable>

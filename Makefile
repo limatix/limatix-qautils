@@ -1,11 +1,13 @@
 PREFIX=/usr/local
 INSTDIR=$(PREFIX)/QAutils
 INSTALL=install
+SUBDIRS=checklist/
 
 all:
-	echo "Nothing to do"
+	@for i in $(SUBDIRS) ; do if [ -d $$i ] && [ -f $$i/Makefile ] ; then $(MAKE) $(MFLAGS) -C $$i ; fi done
 
 clean: 
+        @for i in $(SUBDIRS) ; do if [ -d $$i ] && [ -f $$i/Makefile ] ; then $(MAKE) $(MFLAGS) -C $$i clean ; fi done
 	rm -f `find . -name "*~"`
 	rm -f `find . -name "*.swp"`
 	rm -f `find . -name "*.bak"` 
