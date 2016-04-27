@@ -721,8 +721,16 @@ var saveAs = saveAs
 	  var sourcefilename=document.baseURI.split('/').pop()
 
 	  var filenameinput=document.getElementById("filenameinput");
-	  /* force extension to ".chf" */
-	  filenameinput.value=sourcefilename.substr(0, sourcefilename.lastIndexOf(".")) + ".chf";
+	  /* force extension to ".chf"/.plf */
+
+          if (oldextension==".plx") {
+            // Force extension to .plf
+ 	    filenameinput.value=sourcefilename.substr(0, sourcefilename.lastIndexOf(".")) + ".plf";
+
+          } else {
+            // Force extension to .chf
+ 	    filenameinput.value=sourcefilename.substr(0, sourcefilename.lastIndexOf(".")) + ".chf";
+          }
 
         }
 
