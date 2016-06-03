@@ -17,8 +17,6 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv
 
-    chxfile = sys.argv[1]
-
     if len(sys.argv) < 2:
         print "usage: chx2pdf <chxfile.chx> <optional specimen> <optional perfby> <optional date> <optional dest>"
         print " "
@@ -26,6 +24,9 @@ def main(argv=None):
         print " "
         sys.exit(1)
         pass
+
+    chxfile = sys.argv[1]
+
 
     if len(sys.argv) >= 3 and len(sys.argv[2]) > 0:
         specimen = sys.argv[2]

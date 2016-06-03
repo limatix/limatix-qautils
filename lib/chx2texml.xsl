@@ -6,7 +6,7 @@ command:
   Or use the chx2pdf script to automate execution and parameter passing
 
 -->
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:chx="http://thermal.cnde.iastate.edu/checklist">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" xmlns:xlink="http://www.w3.org/1999/xlink">
 <xsl:output method="xml"/>
 
 <xsl:param name="specimen"/>
@@ -80,16 +80,16 @@ command:
 
 <xsl:template name="unescapeunderscore">
 <xsl:param name="paramstr"/>
-<xsl:choose><xsl:when test="contains($paramstr,'_')">
-  <xsl:value-of select="substring-before($paramstr,'_')"/>
+<xsl:choose><xsl:when test="contains(string($paramstr),'_')">
+  <xsl:value-of select="substring-before(string($paramstr),'_')"/>
   <spec cat="sub"/> <!-- insert unescaped underscore -->
   <xsl:call-template name="unescapeunderscore">
     <xsl:with-param name="paramstr">
-      <xsl:value-of select="substring-after($paramstr,'_')"/>
+      <xsl:value-of select="substring-after(string($paramstr),'_')"/>
     </xsl:with-param>
   </xsl:call-template>
 </xsl:when><xsl:otherwise>
-  <xsl:value-of select="$paramstr"/>
+  <xsl:value-of select="string($paramstr)"/>
 </xsl:otherwise></xsl:choose>
 </xsl:template>
 
@@ -156,7 +156,9 @@ command:
 <TeXML escape="0">
 \catcode`\_=8   % Make underscore special again
 </TeXML>
-
+<xsl:if test="chx:rationale">
+  <xsl:value-of select="chx:rationale"/>
+</xsl:if>
 <env name="checklist">
   <xsl:apply-templates/>
 </env>
@@ -217,7 +219,20 @@ command:
       <xsl:with-param name="paramstr">
         <xsl:call-template name="trimspaces">
           <xsl:with-param name="str">
-             <xsl:value-of select="chx:parameter[@name='image']"/>
+	    <xsl:choose>
+	      <xsl:when test="chx:image/@xlink:href">
+		<xsl:value-of select="chx:image/@xlink:href"/>
+	      </xsl:when> <xsl:when test="chx:parameter[@name='image']/@xlink:href">
+		<xsl:value-of select="chx:parameter[@name='image']/@xlink:href"/>
+		
+	      </xsl:when><xsl:when test="string-length(chx:parameter[@name='image']) &gt; 0">
+		<xsl:value-of select="chx:parameter[@name='image']"/>
+	      </xsl:when><xsl:when test="string-length(chx:image) &gt; 0">
+		<xsl:value-of select="chx:image"/>
+	      </xsl:when>
+	      <!-- <xsl:otherwise>(no image specified)</xsl:otherwise> -->
+	      
+	    </xsl:choose>
           </xsl:with-param>
         </xsl:call-template>
       </xsl:with-param>
@@ -237,6 +252,7 @@ command:
 <xsl:template match="chx:date"/>
 <xsl:template match="chx:dest"/>
 <xsl:template match="chx:log"/>
+<xsl:template match="chx:rationale"/>
 
 
 <!-- This template trims leading and trailing spaces off a string-->
