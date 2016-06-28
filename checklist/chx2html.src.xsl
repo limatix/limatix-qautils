@@ -1394,14 +1394,14 @@ while converting markup into the html namespace -->
 
 <!-- while copying into the DOM tree we need to make sure that 
 any checkitems with class=="textentry" have 
-<parameter type="str" name="text"/>tags to store the text in -->
+<text>tags to store the text in -->
 <xsl:template  match="checkitem" mode="copychecklist">
   <xsl:copy>
     <xsl:apply-templates select="@*|node()" mode="copychecklist"/>
-    <xsl:if test="@class='textentry' and count(chx:parameter[@name='text']) &lt; 1">
-      <chx:parameter xmlns="" type="str" name="text">
+    <xsl:if test="@class='textentry' and (count(chx:parameter[@name='text'])+count(chx:text)) &lt; 1">
+      <chx:text xmlns="">
 	<xsl:value-of select="chx:parameter[@name='initialtext']"/>
-      </chx:parameter>
+      </chx:text>
     </xsl:if>
   </xsl:copy>  
 </xsl:template>
