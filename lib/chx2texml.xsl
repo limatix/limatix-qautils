@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version='1.0' encoding='UTF-8'?>
 <!-- The output of this stylesheet can be tested with the xsltproc
 command:
   xsltproc chx2texml.xsl example.chx > example.texml 
   Or use the chx2pdf script to automate execution and parameter passing
 
--->
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" xmlns:xlink="http://www.w3.org/1999/xlink">
+  -->
+
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:chx="http://limatix.org/checklist" version="1.0">
 <xsl:output method="xml"/>
 
 <xsl:param name="specimen"/>
@@ -181,11 +181,11 @@ command:
     <!-- extract description tags and description parameters -->
     <xsl:apply-templates select="chx:description" mode="descrmarkup"/>
     <xsl:apply-templates select="chx:parameter[@name='description']" mode="descrmarkup"/>
-    <xsl:choose><xsl:when test="string-length(string(chx:parameter[@name='dg-command'])) > 0">
+    <xsl:choose><xsl:when test="string-length(string(chx:parameter[@name='dg-command'])) &gt; 0">
       <ctrl ch=" "/>  <ctrl ch="\"/>  <!-- space followed by line-break -->
       <group><cmd name="tt"/><xsl:value-of select="chx:parameter[@name='dg-command']"/></group>
     </xsl:when></xsl:choose>
-    <xsl:choose><xsl:when test="string-length(string(chx:parameter[@name='dg-param'])) > 0">
+    <xsl:choose><xsl:when test="string-length(string(chx:parameter[@name='dg-param'])) &gt; 0">
       <ctrl ch=" "/>  <ctrl ch="\"/>  <!-- space followed by line-break -->
       <group><cmd name="tt"/><xsl:value-of select="chx:parameter[@name='dg-param']"/><xsl:value-of select="string(' ')"/><xsl:value-of select="chx:parameter[@name='dg-paramdefault']"/></group>
     </xsl:when></xsl:choose>
@@ -200,7 +200,7 @@ command:
 	  <cmd name="makebox">
 	    <opt>4.5in</opt>
 	    <opt>l</opt>
-	    <parm></parm>
+	    <parm/>
 	  </cmd>
 	</parm>
       </cmd>
@@ -258,13 +258,13 @@ command:
 <!-- This template trims leading and trailing spaces off a string-->
 <xsl:template name="trimspaces">
   <xsl:param name="str"/>
-  <xsl:choose><xsl:when test="starts-with($str,' ') or starts-with($str,'&#x0a;') or starts-with($str,'&#x0d;')">
+  <xsl:choose><xsl:when test="starts-with($str,' ') or starts-with($str,'&#10;') or starts-with($str,'&#13;')">
     <xsl:call-template name="trimspaces">
       <xsl:with-param name="str">
 	<xsl:value-of select="substring($str,2)"/>
       </xsl:with-param>
     </xsl:call-template>    
-  </xsl:when><xsl:when test="substring($str,string-length($str))=' ' or substring($str,string-length($str))='&#x0a;' or substring($str,string-length($str))='&#x0d;'">
+  </xsl:when><xsl:when test="substring($str,string-length($str))=' ' or substring($str,string-length($str))='&#10;' or substring($str,string-length($str))='&#13;'">
     <xsl:call-template name="trimspaces">
       <xsl:with-param name="str">
 	<xsl:value-of select="substring($str,1,string-length($str)-1)"/>

@@ -28,7 +28,7 @@ blank lines are not allowed in that case -->
      with whether all boxes are checked, or remove it entirely
 -->
 
-<checklist xmlns="http://thermal.cnde.iastate.edu/checklist" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" xmlns:xlink="http://www.w3.org/1999/xlink" filled="false" allchecked="false" done="false">
+<checklist xmlns="http://limatix.org/checklist" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:chx="http://limatix.org/checklist" filled="false" allchecked="false" done="false">
   <!-- if this is a datacollect checklist you can put a 
        dc:done_is_save_measurement="true" attribute in the <checklist> tag
        to have datacollect turn the done button to a "Save measurement" button.
@@ -47,7 +47,7 @@ blank lines are not allowed in that case -->
 
        Please note that to use the dc: prefix you need to define the datacollect
        namespace in the checklist tag, e.g.
-         xmlns:dc="http://thermal.cnde.iastate.edu/datacollect"
+         xmlns:dc="http://limatix.org/datacollect"
   -->
         
   <!-- At the top of the checklist block you can specify parameters
@@ -74,7 +74,7 @@ blank lines are not allowed in that case -->
      relative path (or perhaps url reference) to the parent 
      checklist that triggered this checklist. The "chx:parent"
      tag should also have an xlink:arcrole attribute with the
-     value "http://thermal.cnde.iastate.edu/linktoparent"
+     value "http://limatix.org/linktoparent"
   -->
   <specimen reset="false">12-12345</specimen>
   <!--  * "perfby", Name of person performing checklist -->
@@ -86,7 +86,7 @@ blank lines are not allowed in that case -->
   <date></date><!-- date is of form 2012-12-31-->
 
   <!--dc:measnum is used within datacollect to record the measurement number(s) that correspond to checklists that contain save measurement step(s), done_is_save_button and/or part_of_a_checklist 
-  <dc:measnum xmlns:dc="http://thermal.cnde.iastate.edu/datacollect">5;6</dc:measnum>  -->
+  <dc:measnum xmlns:dc="http://limatix.org/datacollect">5;6</dc:measnum>  -->
 
   <!--  * "dest", Destination folder, if automated disposition is desired 
           There can be an optional "reset" attribute which can be "true" or 

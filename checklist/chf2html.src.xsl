@@ -24,8 +24,7 @@ below. Then run:
 xsltproc chx2html.xsl myfile.chx > myfile.html
 
 -->
-
-<xsl:stylesheet version="1.0" xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" xmlns:dc="http://thermal.cnde.iastate.edu/datacollect" xmlns:dcv="http://thermal.cnde.iastate.edu/dcvalue" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" exclude-result-prefixes="#default">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist" xmlns="http://www.w3.org/1999/xhtml" xmlns:dcfoo="http://limatix.org/datacollect" version="1.0" exclude-result-prefixes="#default">
 <xsl:output method="xml" version="1.0" media-type="application/xhtml+xml" encoding="UTF-8" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
 <xsl:param name="specimen"/>
@@ -164,10 +163,10 @@ Header indicates all boxes checked.
   <xsl:variable name="number"><xsl:number/></xsl:variable>
   <xsl:variable name="title">
     <xsl:choose>
-      <xsl:when test="string-length(string(@title)) > 0">
+      <xsl:when test="string-length(string(@title)) &gt; 0">
 	<xsl:value-of select="@title"/>
       </xsl:when>
-      <xsl:when test="string-length(string(text())) > 0">
+      <xsl:when test="string-length(string(text())) &gt; 0">
 	<xsl:value-of select="text()"/>
       </xsl:when>
     </xsl:choose>
@@ -207,11 +206,11 @@ Header indicates all boxes checked.
 	  <td>
             <xsl:apply-templates select="chx:description/node()" mode="copydescr"/>
             <xsl:apply-templates select="chx:parameter[@name='description']/node()" mode="copydescr"/> 
-            <xsl:choose><xsl:when test="string-length(string(chx:parameter[@name='dg-command'])) > 0">
+            <xsl:choose><xsl:when test="string-length(string(chx:parameter[@name='dg-command'])) &gt; 0">
   	      <br/>  <!-- line-break -->
 	      <tt><xsl:value-of select="chx:parameter[@name='dg-command']"/></tt>
             </xsl:when></xsl:choose>
-            <xsl:choose><xsl:when test="string-length(string(chx:parameter[@name='dg-param'])) > 0">
+            <xsl:choose><xsl:when test="string-length(string(chx:parameter[@name='dg-param'])) &gt; 0">
 	      <br/>  <!-- line-break -->
 	      <tt><xsl:value-of select="chx:parameter[@name='dg-param']"/><xsl:value-of select="string(' ')"/><xsl:value-of select="chx:parameter[@name='dg-paramdefault']"/></tt>
             </xsl:when></xsl:choose>
@@ -219,7 +218,7 @@ Header indicates all boxes checked.
 	  <xsl:if test="@class='textentry'">
 	    <td style="text-align: right;">
               <input type="text">
-    		<xsl:if test="count(chx:parameter[@name='width']|chx:width) > 0">
+    		<xsl:if test="count(chx:parameter[@name='width']|chx:width) &gt; 0">
 		  <xsl:attribute name="size"><xsl:value-of select="chx:parameter[@name='width']|chx:width"/></xsl:attribute>
 		</xsl:if>
 		<xsl:attribute name="id">textentry<xsl:number/></xsl:attribute>

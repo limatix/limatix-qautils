@@ -25,7 +25,8 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 
 -->
 
-<xsl:stylesheet version="1.0" xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" xmlns:dc="http://thermal.cnde.iastate.edu/datacollect" xmlns:dcv="http://thermal.cnde.iastate.edu/dcvalue" xmlns:xlink="http://www.w3.org/1999/xlink" >
+
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist" xmlns="http://www.w3.org/1999/xhtml" xmlns:dcfoo="http://limatix.org/datacollect" version="1.0">
 
 <!-- *** Begin datacollect XML representation *** -->
 <!-- *** Must keep this set of templates synchronized between

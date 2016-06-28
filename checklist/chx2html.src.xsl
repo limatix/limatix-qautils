@@ -25,7 +25,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 
 -->
 
-<xsl:stylesheet version="1.0" xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:chx="http://thermal.cnde.iastate.edu/checklist" xmlns:dc="http://thermal.cnde.iastate.edu/datacollect" xmlns:dcv="http://thermal.cnde.iastate.edu/dcvalue" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude"  exclude-result-prefixes="#default">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist" xmlns="http://www.w3.org/1999/xhtml" xmlns:dcfoo="http://limatix.org/datacollect" version="1.0" exclude-result-prefixes="#default">
 <xsl:output method="xml" version="1.0" media-type="application/xhtml+xml" encoding="UTF-8" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
 <xsl:param name="specimen"/>
@@ -450,7 +450,7 @@ var saveAs = saveAs
       var addnums_xsl="\
       \
       \
-      <xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns=\"http://thermal.cnde.iastate.edu/checklist\" xmlns:chx=\"http://thermal.cnde.iastate.edu/checklist\">\
+      <xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns=\"http://limatix.org/checklist\" xmlns:chx=\"http://limatix.org/checklist\">\
       <xsl:output method=\"xml\" version=\"1.0\"/>\
       <xsl:param name=\"date\"/>\
       <xsl:template match=\"chx:checkitem\">\
@@ -516,7 +516,7 @@ var saveAs = saveAs
       var filternums_xsl="\
       \
       \
-      <xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns=\"http://thermal.cnde.iastate.edu/checklist\" xmlns:chx=\"http://thermal.cnde.iastate.edu/checklist\">\
+      <xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns=\"http://limatix.org/checklist\" xmlns:chx=\"http://limatix.org/checklist\">\
       <xsl:output method=\"xml\" version=\"1.0\"/>\
       <xsl:template match=\"chx:checkitem\">\
         <xsl:copy>\
@@ -569,7 +569,7 @@ var saveAs = saveAs
       function nsresolver(prefix) { // namespace resolver for xpath queries
         var ns = {
           'xhtml' : 'http://www.w3.org/1999/xhtml',
-          'chx': 'http://thermal.cnde.iastate.edu/checklist'
+          'chx': 'http://limatix.org/checklist'
         };
 	return ns[prefix] || null;
       }
@@ -623,7 +623,7 @@ var saveAs = saveAs
 	rawdiv.parentNode.removeChild(rawdiv);
 	
 	//frag=document.createDocumentFragment();
-	frag=document.implementation.createDocument("http://thermal.cnde.iastate.edu/checklist","checklist",null)
+	frag=document.implementation.createDocument("http://limatix.org/checklist","checklist",null)
 
 	maintag=frag.firstChild;
 
@@ -741,9 +741,9 @@ var saveAs = saveAs
       });
 
       function addlog() {
-        if (checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log").length==0) {
-	  newel = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","log");
-          log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","checklist")[0].appendChild(newel);
+        if (checklistxml.getElementsByTagNameNS("http://limatix.org/checklist","log").length==0) {
+	  newel = checklistxml.createElementNS("http://limatix.org/checklist","log");
+          log = checklistxml.getElementsByTagNameNS("http://limatix.org/checklist","checklist")[0].appendChild(newel);
 
 	  // Set log starttimestamp
 	  var timestamp = getisotimestamp();
@@ -776,7 +776,7 @@ var saveAs = saveAs
 		xmlitem.setAttribute("checked",checkitem.checked.toString());
 		
 		// Get Handle to Log 
-		log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log")[0];
+		log = checklistxml.getElementsByTagNameNS("http://limatix.org/checklist","log")[0];
 		
 		// Get a Timestamp
                 currentdatetimeiso=getisotimestamp();
@@ -797,7 +797,7 @@ var saveAs = saveAs
                         action="unchecked"
 		}
 		// Append to Log
-		logentry = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","logentry");
+		logentry = checklistxml.createElementNS("http://limatix.org/checklist","logentry");
 		logentry.setAttribute("timestamp", currentdatetimeiso);
 		logentry.setAttribute("item", numberstring);
                 logentry.setAttribute("action", action);
@@ -816,13 +816,13 @@ var saveAs = saveAs
         var xmlitemtext=checklistxml.evaluate("chx:checklist/chx:checkitem[@checkitemnum=\""+numberstring+"\"]/chx:parameter[@name=\"text\"]|chx:checklist/chx:checkitem[@checkitemnum=\""+numberstring+"\"]/chx:text",checklistxml,nsresolver,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue;
 	xmlitemtext.textContent=textentry.value;
 	// Get Handle to Log
-	log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log")[0];
+	log = checklistxml.getElementsByTagNameNS("http://limatix.org/checklist","log")[0];
 	// Get a Timestamp
 	var timestamp = getisotimestamp();
 	// Set Log Status Message
 	logmessage = "Text Field on Item " + String(numberstring) + " Updated";
 	// Append to Log
-	logentry = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","logentry");
+	logentry = checklistxml.createElementNS("http://limatix.org/checklist","logentry");
 	logentry.setAttribute("timestamp", timestamp);
 	logentry.setAttribute("item", numberstring);
 	logentry.setAttribute("action", "updatetext");
@@ -840,14 +840,14 @@ var saveAs = saveAs
         var xmlnotes=checklistxml.evaluate("chx:checklist/chx:notes",checklistxml,nsresolver,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue;
 	xmlnotes.textContent=notesarea.value;
 
-	log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log")[0];
+	log = checklistxml.getElementsByTagNameNS("http://limatix.org/checklist","log")[0];
 	
 	// Get a Timestamp
 	var timestamp = getisotimestamp();
 	// Set Log Status Message
 	logmessage = "Notes Area Updated";
 	// Append to Log
-	logentry = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","logentry");
+	logentry = checklistxml.createElementNS("http://limatix.org/checklist","logentry");
 	logentry.setAttribute("timestamp", timestamp);
 	logentry.setAttribute("action", "updatetext");
 	logentry.setAttribute("item", "notes");
@@ -942,14 +942,14 @@ var saveAs = saveAs
         var textxml=checklistxml.evaluate("chx:checklist/chx:"+nodename,checklistxml,nsresolver,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue;
 	textxml.textContent=textinput.value;
 	
-	log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log")[0];
+	log = checklistxml.getElementsByTagNameNS("http://limatix.org/checklist","log")[0];
 	
 	// Get a Timestamp
 	var timestamp = getisotimestamp();
 	// Set Log Status Message
 	logmessage = "Text Field " + textinput.getAttribute("name") + " Updated";
 	// Append to Log
-	logentry = checklistxml.createElementNS("http://thermal.cnde.iastate.edu/checklist","logentry");
+	logentry = checklistxml.createElementNS("http://limatix.org/checklist","logentry");
 	logentry.setAttribute("timestamp", timestamp);
 	logentry.setAttribute("action", "updatetext")
 	logentry.setAttribute("item", textinput.getAttribute("name"))
@@ -1052,8 +1052,8 @@ var saveAs = saveAs
 
 
 	/* reset log */
-	if (checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log").length!=0) {
-	  log = checklistxml.getElementsByTagNameNS("http://thermal.cnde.iastate.edu/checklist","log")[0];
+	if (checklistxml.getElementsByTagNameNS("http://limatix.org/checklist","log").length!=0) {
+	  log = checklistxml.getElementsByTagNameNS("http://limatix.org/checklist","log")[0];
 	  log.parentNode.removeChild(log);
 
 	}
@@ -1206,10 +1206,10 @@ var saveAs = saveAs
 <xsl:template match="chx:checkitem">
   <xsl:variable name="title">
     <xsl:choose>
-      <xsl:when test="string-length(string(@title)) > 0">
+      <xsl:when test="string-length(string(@title)) &gt; 0">
 	<xsl:value-of select="@title"/>
       </xsl:when>
-      <xsl:when test="string-length(string(text())) > 0">
+      <xsl:when test="string-length(string(text())) &gt; 0">
 	<xsl:value-of select="text()"/>
       </xsl:when>
     </xsl:choose>
@@ -1233,11 +1233,11 @@ var saveAs = saveAs
 	  <td>
             <xsl:apply-templates select="chx:description/node()" mode="copydescr"/>
             <xsl:apply-templates select="chx:parameter[@name='description']/node()" mode="copydescr"/> 
-            <xsl:choose><xsl:when test="string-length(string(chx:parameter[@name='dg-command'])) > 0">
+            <xsl:choose><xsl:when test="string-length(string(chx:parameter[@name='dg-command'])) &gt; 0">
   	      <br/>  <!-- line-break -->
 	      <tt><xsl:value-of select="chx:parameter[@name='dg-command']"/></tt>
             </xsl:when></xsl:choose>
-            <xsl:choose><xsl:when test="string-length(string(chx:parameter[@name='dg-param'])) > 0">
+            <xsl:choose><xsl:when test="string-length(string(chx:parameter[@name='dg-param'])) &gt; 0">
 	      <br/>  <!-- line-break -->
 	      <tt><xsl:value-of select="chx:parameter[@name='dg-param']"/><xsl:value-of select="string(' ')"/><xsl:value-of select="chx:parameter[@name='dg-paramdefault']"/></tt>
             </xsl:when></xsl:choose>
@@ -1245,7 +1245,7 @@ var saveAs = saveAs
 	  <xsl:if test="@class='textentry'">
 	    <td style="text-align: right;">
               <input type="text">
-    		<xsl:if test="count(chx:parameter[@name='width']|chx:width) > 0">
+    		<xsl:if test="count(chx:parameter[@name='width']|chx:width) &gt; 0">
 		  <xsl:attribute name="size"><xsl:value-of select="chx:parameter[@name='width']|chx:width"/></xsl:attribute>
 		</xsl:if>
 		<xsl:attribute name="id">textentry<xsl:number/></xsl:attribute>
