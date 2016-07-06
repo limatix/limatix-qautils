@@ -1,0 +1,438 @@
+#! /usr/bin/python
+
+import os
+import copy
+import re
+import tempfile
+import datetime
+import sys
+import traceback
+import subprocess
+import threading
+import zbar
+import Image
+from lxml import etree
+from StringIO import StringIO
+
+class logwriter(object):
+
+    stdout = None
+    log = None
+
+    def __init__(self):
+        self.stdout = sys.stdout
+        self.log = StringIO()
+        pass
+
+    def write(self, s):
+        self.stdout.write(s)
+        self.log.write(s)
+        pass
+
+    def flush(self):
+        self.stdout.flush()
+        pass
+
+
+class pagehandler(object):
+    pastpages=None  # list of (name,tagdict,checklist,pagenum,numpages)
+    missedpages=None
+    
+    def __init__(self):
+        self.pastpages=[]
+        self.missedpages=[]
+        pass
+
+    def process_barcodes(self,zbarimg):
+        tagdict={}
+        checklist=etree.Element("{http://thermal.cnde.iastate.edu/checklist}checklist",nsmap={ None: "http://thermal.cnde.iastate.edu/checklist", "dc":"http://thermal.cnde.iastate.edu/datacollect", "dcv":"http://thermal.cnde.iastate.edu/dcvalue"})
+
+        for symbol in zbarimg:
+            
+            try : 
+                # Check for abbreviated form <specimen/>C00-101
+                matchobj=re.match(r"""<([^&#<>]+)/>([^<]*)""",symbol.data)
+                # print matchobj
+                if matchobj is not None:
+                    # print matchobj.groups()
+                    barcodexml=etree.Element("{http://thermal.cnde.iastate.edu/checklist}"+matchobj.group(1))
+                    barcodexml.text=matchobj.group(2)
+                
+                    pass
+                else :
+                    # full XML form (wrap temporarily in dummyroot so we can get the xmlns declaration in 
+                    wrappedbarcodexml=etree.XML('<dummyroot xmlns="http://thermal.cnde.iastate.edu/checklist">'+symbol.data+'</dummyroot>')
+                    if len(wrappedbarcodexml) < 1:
+                        raise ValueError("No tag in xml data %s" % (symboldata))
+                
+                    barcodexml=wrappedbarcodexml[0]                
+                    barcodexml.getparent().remove(barcodexml) # remove from wrapper
+                
+                
+                    # print barcodexml
+                    pass
+                pass
+            except (ValueError, etree.XMLSyntaxError, etree.ParseError): 
+                (exctype,excvalue)=sys.exc_info()[:2]
+
+                sys.stderr.write("%s %s\n" % (str(exctype.__name__),str(excvalue)))
+                traceback.print_exc()
+                
+                pass
+            
+            # add tag to checklist element
+            checklist.append(barcodexml)
+                    
+            tagdict[barcodexml.tag.split("}")[1]]=barcodexml.text
+            pass
+        
+        return (tagdict,checklist)
+
+    def throwawaypast(self):
+        for (pastname,pasttagdict,pastchecklist,pastpagenum,pastnumpages) in self.pastpages:
+            self.missedpages.append(pastname)
+            pass
+        self.pastpages=[]
+        pass
+
+    def getsubdirs(self, path):
+        dirs = []
+        curdirs = filter(os.path.isdir, [os.path.join(path, child) for child in os.listdir(path) if not child.startswith('.')])
+        for directory in curdirs:
+            dirs.append(directory)
+            dirs.extend(self.getsubdirs(directory))
+        return dirs
+
+    def try_autofilename(self,checklist,tagdict,dest):
+        # read through /databrowse/SOPs, looking to see if we can find the checklist itself
+        CHXsearchfolders=['/databrowse/SOPs']
+
+        
+        SOPfiles=[]
+        
+        autofilename=None
+
+        CHXrecursivefolders = []
+        for searchfolder in CHXsearchfolders:
+            CHXrecursivefolders.append(searchfolder)
+            CHXrecursivefolders.extend(self.getsubdirs(searchfolder))
+            pass
+
+        CHXsearchfolders = CHXrecursivefolders
+        
+        for searchfolder in CHXsearchfolders:
+            SOPfiles.extend([os.path.join(searchfolder,fname) for fname in os.listdir(searchfolder) if fname.endswith('.chx')])
+            pass
+        
+        for fname in SOPfiles:
+            if os.path.splitext(fname)[1]=='.chx':
+                # found a CHX file
+                try :
+                    CHX=etree.parse(fname)
+                    clinfo=CHX.find('/chx:clinfo',namespaces={'chx':'http://thermal.cnde.iastate.edu/checklist'})
+                    if clinfo.text==tagdict["clinfo"]:
+                        # Found matching file !!!
+                        desttag=CHX.find('/chx:dest',namespaces={'chx':'http://thermal.cnde.iastate.edu/checklist'})
+                        if "autofilename" in desttag.attrib:
+                            autofilename=checklist.xpath(desttag.attrib["autofilename"],namespaces={'chx':'http://thermal.cnde.iastate.edu/checklist','dc':'http://thermal.cnde.iastate.edu/datacollect','dcv':'http://thermal.cnde.iastate.edu/dcvalue'})
+                            pass
+                        
+                        break
+                    pass
+                except: 
+                    (exctype,excvalue)=sys.exc_info()[:2]                    
+                    sys.stderr.write("Error searching for CHX file %s %s\n" % (str(exctype.__name__),str(excvalue)))
+                    traceback.print_exc()
+                    pass
+                pass
+            pass
+        
+        if autofilename is not None:
+            # found a match!
+            (filebasename,fileext)=os.path.splitext(autofilename)
+            cnt=1
+
+            chklistfile="%s-%.4d%s" % (filebasename,cnt,fileext)
+            pdffile="%s-%.4d.pdf" % (filebasename,cnt)
+            
+            while os.path.exists(os.path.join(dest,chklistfile)) or os.path.exists(os.path.join(dest,pdffile)):
+                cnt+=1
+                
+                chklistfile="%s-%.4d%s" % (filebasename,cnt,fileext)
+                pdffile="%s-%.4d.pdf" % (filebasename,cnt)
+                pass
+            
+            return (chklistfile,pdffile)
+            
+        
+        return (None,None)
+
+
+    def defaultfilename(self,tagdict,dest):
+
+        # default name generation
+        
+        # try to remove date from clinfostr
+        matchobj=re.match("(.*)_\\d\\d\\d\\d-\\d\\d?-\\d\\d?",tagdict["clinfo"])
+        if matchobj is not None:
+            clinfostr=matchobj.group(1)
+            pass
+        else :
+            clinfostr=tagdict["clinfo"]
+            pass
+        
+        outname=clinfostr
+        
+        if "specimen" in tagdict:
+            outname+="_" + tagdict["specimen"]
+            pass
+
+        if "perfby" in tagdict:
+            outname+="_" + tagdict["perfby"]
+            pass
+        
+        if "date" in tagdict:
+            outname+="_" + tagdict["date"]
+            pass
+        
+        conflict=True
+        index=0
+
+        while conflict:
+            outfullname="%s_%.4d.chf" % (outname,index)
+            outpdfname="%s_%.4d.pdf" % (outname,index)
+            
+            if not os.path.exists(os.path.join(dest,outfullname)) and not os.path.exists(os.path.join(dest,outpdfname)) :
+                conflict=False
+                pass
+            
+            index+=1
+            pass
+        
+        return (outfullname,outpdfname)
+        
+    def handlepage(self,name,zbarimg):
+        (tagdict,checklist)=self.process_barcodes(zbarimg)
+
+        # print str(tagdict)
+        # print str(checklist)
+
+        if not "page" in tagdict:
+            self.missedpages.append(name)
+            return
+
+        (pagenumstr,numpagesstr)=tagdict["page"].split("/")
+        pagenum=int(pagenumstr)
+        numpages=int(numpagesstr)
+
+        if pagenum == 1 and len(self.pastpages) != 0:
+            # throw away  past pages by adding them to missed pages
+            self.throwawaypast()
+            pass
+        
+        if pagenum != 1:
+            (lastname,lasttagdict,lastchecklist,lastpagenum,lastnumpages) = self.pastpages[-1]
+            if pagenum != lastpagenum+1 or lastnumpages != numpages:
+                self.throwawaypast()
+                self.missedpages.append(name)
+                return
+            
+            
+            
+            pass
+
+        self.pastpages.append((name,tagdict,checklist,pagenum,numpages))
+        
+        print "page %d/%d" % (pagenum,numpages)
+        
+
+        if pagenum==numpages: 
+            # merge and process
+
+
+            try : 
+                pdflist=[]
+                checklist=etree.Element("{http://thermal.cnde.iastate.edu/checklist}checklist",nsmap={ None: "http://thermal.cnde.iastate.edu/checklist", "dc":"http://thermal.cnde.iastate.edu/datacollect", "dcv":"http://thermal.cnde.iastate.edu/dcvalue"})
+                checkdoc=etree.ElementTree(checklist)
+                checklist.addprevious(etree.ProcessingInstruction("xml-stylesheet",'type="text/xsl" href="chf2html.xsl"'))
+                tagdict={}
+                for (pastname,pasttagdict,pastchecklist,pastpagenum,pastnumpages) in self.pastpages:
+                    pdflist.append(pastname)
+                    tagdict.update(pasttagdict)
+                
+                    for barcodexml in pastchecklist:
+                        if barcodexml.tag == '{http://thermal.cnde.iastate.edu/checklist}allchecked':
+                            checklist.attrib["allchecked"]='true' # set attribute and ignore tag
+                            pass
+                        elif barcodexml.tag == '{http://thermal.cnde.iastate.edu/checklist}page':
+                            # page tags are unnecessary
+                            pass
+                        elif checklist.find(barcodexml.tag) is None:
+                            # Don't already have this tag... add it!
+                            checklist.append(barcodexml)
+                            pass
+                        pass
+                
+                
+                    pass
+
+                # need at minimum clinfo and dest... 
+                if not "clinfo" in tagdict or not "dest" in tagdict:
+                    # otherwise put into the throwaway pile
+                    self.throwawaypast()
+                    return
+
+                dest=tagdict["dest"]
+                if not os.path.isabs(dest):
+                    dest=os.path.join('/databrowse',dest)
+                    pass
+                
+
+                (outfullname,outpdfname)=self.try_autofilename(checklist,tagdict,dest)
+
+                if outfullname is None:
+                    (outfullname,outpdfname)=self.defaultfilename(tagdict,dest)
+                    pass
+
+                checkdoc.getroot().attrib["scannedpdf"]=os.path.split(outpdfname)[1]
+            
+                print "Writing %s and %s..." % (os.path.join(dest,outfullname),os.path.join(dest,outpdfname)), 
+
+                # write PDF
+                self.generatepdf(pdflist,os.path.join(dest,outpdfname))
+                # Write XML CHF
+                checkdoc.write(os.path.join(dest,outfullname),pretty_print=True,encoding='utf-8')
+
+                print "done."
+
+                self.pastpages=[] # reset
+            
+                pass
+            except : 
+                # some failure in the merge process
+                (exctype,excvalue)=sys.exc_info()[:2]
+
+                sys.stderr.write("scan_checklist: %s %s\n" % (str(exctype.__name__),str(excvalue)))
+                sys.stderr.write("Adding pages to checklist_scan_failed file\n")
+                traceback.print_exc()
+                
+                self.throwawaypast()  # add to failure pile
+                
+                pass
+            pass
+        pass
+    
+    def generatepdf(self,namelist,outpdfname):
+        # convert each pgm into ps
+        pslist=[]
+        for fname in namelist:
+            outname=os.path.splitext(fname)[0]+".ps"
+            outfile=file(outname,"w")
+            subprocess.call(['/usr/bin/pnmtops','-imagewidth','8.5','-imageheight','11',fname],stdout=outfile)
+            outfile.close()
+            pslist.append(outname)
+            pass
+
+        # assemble postscript files into pdf with gs. 
+        gsargs=['/usr/bin/gs','-dNOPAUSE','-sDEVICE=pdfwrite','-sOutputFile=%s' % (outpdfname),'-q','-dBATCH','-r600','-g5100x6600']
+        gsargs.extend(pslist)
+
+        subprocess.call(gsargs)
+        
+        pass
+
+    def savemissed(self):
+        if len(self.missedpages) > 0:
+
+            conflict=True
+            index=0
+
+            while conflict:
+                filename="/databrowse/checklist_scan_failed_%s_%.4d.pdf" % (datetime.datetime.today().strftime("%Y-%m-%d"),index)
+                logfilename="/databrowse/checklist_scan_failed_%s_%.4d.log" % (datetime.datetime.today().strftime("%Y-%m-%d"),index)
+                if (not os.path.exists(filename)) and (not os.path.exists(logfilename)):
+                    conflict=False
+                    pass
+                
+                index+=1
+                pass
+
+            sys.stdout.write("Warning: Failed to interpret %d pages; saving in %s\n" % (len(self.missedpages),filename))
+            try:
+                log = open(logfilename, 'w')
+                log.write(sys.stdout.log.getvalue())
+                log.close()
+                print "Log file %s written" % logfilename
+            except:
+                print "Failed Writing Logfile"
+                pass
+            self.generatepdf(self.missedpages,filename)
+            self.missedpages=[]
+            pass
+        
+
+        pass
+    
+    pass
+
+    
+def skulker_code(subp):
+    # This thread waits for subp to finish and then sends 
+    # a die notification 'die\n' to pipe_write
+    subp.wait()
+    os.write(pipe_write,'die\n')
+    pass
+
+
+# Switch to Logwriter So We Can Capture All Output For Logging
+outlog = logwriter()
+sys.stdout = outlog
+sys.stderr = outlog
+
+tempdir=tempfile.mkdtemp(suffix='',prefix='scan_databrowsetmp')
+
+os.chdir(tempdir)
+
+# create zbar reader object
+scanner=zbar.ImageScanner()
+scanner.parse_config('enable')
+
+
+(pipe_read,pipe_write)=os.pipe()  # the subprocess script will write to this pipe to tells us when there are new images
+
+read_fh=os.fdopen(pipe_read,'r')
+
+newenviron=copy.deepcopy(os.environ)
+
+newenviron["SCAN_DATABROWSE_PIPE_WRITE"]=str(pipe_write)
+
+subp=subprocess.Popen(['/usr/bin/scanadf','-d','fujitsu:ScanSnap S1500:386246','--resolution','400','--mode','Gray','--scan-script','/usr/local/bin/sdb_gotimage','--script-wait','-o','image-%04d.pgm'])
+
+skulker=threading.Thread(target=skulker_code,args=(subp,))
+skulker.start()
+
+pageh=pagehandler()
+
+line=read_fh.readline()
+while line != 'die\n':
+    matchobj=re.match("gotimage: (.*)\n",line)
+    imgname=matchobj.group(1)
+    
+    pil=Image.open(imgname).convert('L')
+    image=zbar.Image(pil.size[0],pil.size[1],'Y800',pil.tostring())
+    scanner.scan(image)
+
+    for symbol in image:
+        print 'decoded', symbol.type, 'symbol', '"%s"' % symbol.data
+        pass
+
+    pageh.handlepage(imgname,image)
+
+
+    del(image)
+    
+    line=read_fh.readline()
+    pass
+
+pageh.throwawaypast()
+pageh.savemissed()

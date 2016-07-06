@@ -1,0 +1,8 @@
+#! /usr/bin/python
+
+import os
+import sys
+
+pipe_write=int(os.environ["SCAN_DATABROWSE_PIPE_WRITE"])
+os.write(pipe_write,'gotimage: %s\n' % (sys.argv[1]))
+sys.exit(0)

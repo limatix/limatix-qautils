@@ -44,6 +44,10 @@ install: clean
 	ln -s $(INSTDIR)/bin/QAstatement2pdf $(PREFIX)/bin/QAstatement2pdf
 	rm -f $(PREFIX)/bin/printQRcode
 	ln -s $(INSTDIR)/bin/printQRcode $(PREFIX)/bin/printQRcode
+	rm -f $(PREFIX)/bin/sdb_gotimage
+	ln -s $(INSTDIR)/bin/sdb_gotimage $(PREFIX)/bin/sdb_gotimage
+	rm -f $(PREFIX)/bin/scan_checklist
+	ln -s $(INSTDIR)/bin/scan_checklist $(PREFIX)/bin/scan_checklist
 
 commit: clean
 	hg addremove
