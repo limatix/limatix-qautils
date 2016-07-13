@@ -1,0 +1,109 @@
+#! /usr/bin/python
+# usage: barcode_browser [--active-only]
+#   --active-only parameter means it only operates for console sessions and when they are active
+
+# put barcode_browser.desktop in  /etc/xdg/autostart  so that it will automatically start for all users on login
+import re
+from lxml import etree
+import traceback
+import sys
+import os
+import subprocess
+
+import dbus
+import dbus.mainloop
+import dbus.mainloop.glib
+
+import gobject
+
+DC="{http://thermal.cnde.iastate.edu/datacollect}"
+
+
+def sessionisactive():
+    # determine if this session is active
+
+    ConsoleManager=system_bus.get_object('org.freedesktop.ConsoleKit','/org/freedesktop/ConsoleKit/Manager')
+    CurSession=ConsoleManager.GetCurrentSession(dbus_interface='org.freedesktop.ConsoleKit.Manager')
+    
+    Seats=ConsoleManager.GetSeats(dbus_interface='org.freedesktop.ConsoleKit.Manager')
+    for Seat in Seats: 
+        SeatObj=system_bus.get_object('org.freedesktop.ConsoleKit',Seat)
+        ActiveSession=SeatObj.GetActiveSession(dbus_interface='org.freedesktop.ConsoleKit.Seat')
+        if ActiveSession==CurSession: 
+            return True
+        pass
+    
+
+    return False
+
+def receiver(barcodestr,typestring):
+    print "barcodestring=%s" % (barcodestr)
+
+    XMLel=None
+
+    # Check for abbreviated form <specimen/>C00-101
+    matchobj=re.match(r"""<([^&#<>]+)/>([^<]*)""",barcodestr)
+    # print matchobj
+    if matchobj is not None:
+        XMLel=etree.Element(matchobj.group(1))
+        XMLel.text=matchobj.group(2)
+        pass
+    else : 
+        XML=barcodestr
+        pass
+    
+    try : 
+        if XMLel is None: 
+            # need to parse XML
+            # full XML form (wrap temporarily in dummyroot so we can get the xmlns declaration in 
+
+
+            # Use parser with remove_blank_text otherwise pretty_print
+            # won't work on output
+            parser=etree.XMLParser(remove_blank_text=True)
+            XMLel=etree.XML(XML,parser=parser)
+            
+            pass
+    
+        if (len(sys.argv) < 2 or sys.argv[1] != "--active-only") or sessionisactive():
+
+            if XMLel.tag=="specimen":
+                subprocess.call(['xdg-open','https://pequod.cnde.iastate.edu/databrowse/specimens/%s.sdb' % (XMLel.text)])
+            
+                pass
+            elif XMLel.tag=="xducer":
+                subprocess.call(['xdg-open','https://pequod.cnde.iastate.edu/databrowse/transducers/%s.tdb' % (XMLel.text)])
+                
+                pass
+            pass
+        pass
+    except :
+        (exctype,excvalue)=sys.exc_info()[:2]
+        
+        sys.stderr.write("%s %s\n" % (str(exctype.__name__),str(excvalue)))
+        traceback.print_exc()
+        
+        pass
+    
+    pass
+
+
+dbusname="edu.iastate.cnde.thermal.BarcodeReader"
+dbuspath="/edu/iastate/cnde/thermal/barcode"
+
+dbusloop=dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+loop=gobject.MainLoop()
+
+#system_bus = dbus.SystemBus(mainloop=dbusloop)
+system_bus = dbus.SystemBus()
+
+
+signal_name="read"
+dbus_interface=dbusname # "edu.iastate.cnde.thermal.BarcodeReader" 
+bus_name=None  #??? 
+path=dbuspath # "/edu/iastate/cnde/thermal/barcode"
+
+SignalMatch=system_bus.add_signal_receiver(receiver,signal_name,dbus_interface,bus_name,path)
+#  can add these additional keyword parameters to add_signal_recevier: sender_keyword="sender",destination_keyword="destination",interface_keyword="interface",member_keyword="member",path_keyword="path")
+
+loop.run()

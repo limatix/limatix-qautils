@@ -1,0 +1,92 @@
+#! /usr/bin/python
+
+# Need to install the following in /etc/dbus-1/system.d/barcode_dbus.conf
+barcode_dbus=r"""
+<!DOCTYPE busconfig PUBLIC
+ "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+<busconfig>
+        <policy context="default">
+            <allow own="edu.iastate.cnde.thermal.BarcodeReader"/>
+        </policy>
+</busconfig>
+"""
+
+import dbus
+import sys
+import serial
+import io
+import StringIO
+
+def dbus_send(connection,barcodeinp):
+   # send down dbus
+   message=dbus.lowlevel.SignalMessage(dbuspath,dbusname,"read")
+   message.append(barcodeinp,"s")
+   
+
+   connection.send_message(message)
+   connection.flush()
+
+   pass
+
+
+dbusname="edu.iastate.cnde.thermal.BarcodeReader"
+dbuspath="/edu/iastate/cnde/thermal/barcode"
+
+serportdev="/dev/ttyUSBGryphonBarcode"
+
+baudrate=9600
+
+#connection=dbus.Bus.get_starter()
+#connection=dbus.Bus.get_system()
+connection=dbus.SystemBus()
+
+
+
+if connection.name_has_owner(dbusname):
+   print "barcode_dbus already running (%s has an owner)" % (dbusname)
+   print "You may need to kill the existing process"
+   print "exiting..."
+   sys.exit(1)
+   pass
+
+ret=connection.request_name(dbusname,dbus.bus.NAME_FLAG_DO_NOT_QUEUE);
+
+if ret != dbus.bus.REQUEST_NAME_REPLY_PRIMARY_OWNER:
+   print "Error %d reserving dbus name %s" % (ret,dbusname)
+   print "Exiting..."
+   sys.exit(1)
+   pass
+
+serport=serial.Serial(serportdev,baudrate)
+#serport=io.open("/tmp/testpipe","r")
+
+# use iso8859-15 encoding because unlike utf-8 it doesn't error out. 
+# (at this point we're not expecting non-ascii characters anyway)
+
+
+Buffer=StringIO.StringIO()
+
+while True:
+   byte=serport.read(1);
+   #print "Got byte: %s" % (byte)
+
+   if ord(byte)==13:
+      # got end of line
+      # print "got barcodeinp: %s" % (Buffer.getvalue())
+
+      dbus_send(connection,Buffer.getvalue())
+
+      # clean out buffer and create new
+      Buffer.close()
+      Buffer=StringIO.StringIO()
+      pass
+   else :
+      Buffer.write(byte)
+      pass
+   
+   pass
+   
+
+   # break
+   pass

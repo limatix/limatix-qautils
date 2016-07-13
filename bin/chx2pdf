@@ -132,7 +132,7 @@ def chx2pdf(chxfile, specimen=None, perfby=None, date=None, dest=None):
     texmlfh.close()
 
     texfile = basename + ".tex"
-    subprocess.call(["/usr/local/bin/texml", texmlfile, texfile])
+    subprocess.call(["texml", texmlfile, texfile])
 
     #print "TEXMFHOME=" + os.environ["TEXMFHOME"]
     pdffile = basename + ".pdf"

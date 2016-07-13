@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=barcode_browser
+Comment=Connect barcode scanner to auto-open web browser for specimens and transducers
+Exec=/home/shared/barcode/barcode_browser --active-only
+Type=Application
+Terminal=false
+StartupNotify=false
+Encoding=UTF-8
+Categories=Application;Science;
+Icon=gnome-session.png

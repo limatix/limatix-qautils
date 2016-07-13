@@ -1,5 +1,5 @@
 PREFIX=/usr/local
-INSTDIR=$(PREFIX)/QAutils
+INSTDIR=$(PREFIX)/limatix-qautils
 INSTALL=install
 SUBDIRS=checklist/
 
