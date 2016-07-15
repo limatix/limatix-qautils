@@ -1,8 +1,10 @@
 The LIMATIX QAutils package is a set of miscellaneous tools and
 scripts that assist the use, development, and documentation of
-consistent and repeatable research practices. Some tools are
-very specialized to our work and platforms (tested on Red Hat
-Enterprise Linux 60. They are published in the hope that they
+consistent and repeatable research practices. They were developed
+in consultation with scientists from fields in which data
+quality practices are relatively mature. Some tools are very
+specialized to our work and platforms (tested on Red Hat
+Enterprise Linux 6.0). They are published in the hope that they
 will be useful. 
 
 CONTENTS
@@ -67,6 +69,7 @@ into the latex/tex/latex/local/external subdirectory and the
 
 ACKNOWLEDGMENTS
 ---------------
-Thanks to Michelle Balmer, a former quality assurance officer
-at the Iowa Department of Natural resources for her input
-and feedback. 
+
+This material is based on work supported by the Air Force Research
+Laboratory under Contract #FA8650-10-D-5210, Task Order #023 and
+performed at Iowa State University; Case number XXXXXXXX.

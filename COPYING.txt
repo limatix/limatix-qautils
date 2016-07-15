@@ -1,5 +1,4 @@
 Limatix-qautils is Copyright (c) 2013-2016 Iowa State University
-and others.
 
 Copyright statement for all files not otherwise marked
 ------------------------------------------------------
