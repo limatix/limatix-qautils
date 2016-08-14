@@ -38,7 +38,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
      to actually display the value
 -->
 
-<xsl:template match="dc:*">
+<xsl:template match="dc:*" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <tr class="datacollecttag">
     <th class="datacollecttag">
       <xsl:choose><xsl:when test="@dc:label">
@@ -61,7 +61,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
      If an explicit class is specified, applies templates in mode "displaydcvalueclass". Otherwise creates generic representation. 
 -->
 
-<xsl:template mode="displaydcvalue" match="dc:*|dcv:*">
+<xsl:template mode="displaydcvalue" match="dc:*|dcv:*" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <xsl:choose><xsl:when test="@dcv:valueclass">
     <!-- explicit value class specified -->
     <xsl:apply-templates mode="displaydcvalueclass" select="."/>
@@ -97,16 +97,16 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 
 <!-- Templates for displaying various dc value classes go here -->
 
-<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='numericunits']|dc:*[@dcv:valueclass='complexunits']|dc:*[@dcv:valueclass='heating']">
+<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='numericunits']|dc:*[@dcv:valueclass='complexunits']|dc:*[@dcv:valueclass='heating']" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <xsl:value-of select="."/> &#160; <xsl:value-of select="@dcv:units"/>
 
 </xsl:template>
 
-<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='string']|*[@dcv:valueclass='integer']|*[@dcv:valueclass='dateset']|*[@dcv:valueclass='accumulatingdateset']|*[@dcv:valueclass='integerset']|*[@dcv:valueclass='accumulatingintegerset']">
+<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='string']|*[@dcv:valueclass='integer']|*[@dcv:valueclass='dateset']|*[@dcv:valueclass='accumulatingdateset']|*[@dcv:valueclass='integerset']|*[@dcv:valueclass='accumulatingintegerset']" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <xsl:value-of select="."/>
 </xsl:template>
 
-<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='href']">
+<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='href']" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <a>
     <xsl:attribute name="href"><xsl:value-of select="@xlink:href"/></xsl:attribute>
     <xsl:value-of select="@xlink:href"/>
@@ -115,13 +115,13 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 
 
 
-<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='xmltree']">
+<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='xmltree']" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <!-- serialize contents using mode=serializexmltree -->
   <xsl:apply-templates select="." mode="serializexmltree"/>
 
 </xsl:template>
 
-<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='excitationparams']">
+<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='excitationparams']" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <table class="dcvalue dcv_excitationparams">
     <tr class="dcvalue dcv_excitationparams"><th class="dcvalue dcv_excitationparams" colspan="2"><xsl:value-of select="@dcv:exctype"/></th></tr>
     <xsl:apply-templates mode="excitationparams"/>
@@ -129,7 +129,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
   
 </xsl:template>
 
-<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='image']">
+<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='image']" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <img>
     <xsl:attribute name="src"><xsl:value-of select="@src"/></xsl:attribute>
   </img>
@@ -137,7 +137,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 </xsl:template>
 
 
-<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='photos']">
+<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='photos']" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <table class="dcvalue dcv_photos">
     <tr class="dcvalue dcv_photos"><th class="dcvalue dcv_photos" colspan="2"><xsl:value-of select="@dcv:exctype"/></th></tr>
     <xsl:apply-templates mode="dcv_photos"/>
@@ -148,7 +148,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 <!-- match array class that is C order and has a shape with exactly two elements:
      arrayshape, with normalized space, has a substring after its first space,
      and that substring does not contain a space -->
-<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='array' and @dcv:arraystorageorder='C' and string-length(substring-after(normalize-space(dcv:arrayshape),' ')) &gt; 0 and not(contains(substring-after(normalize-space(dcv:arrayshape),' '),' '))]">
+<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='array' and @dcv:arraystorageorder='C' and string-length(substring-after(normalize-space(dcv:arrayshape),' ')) &gt; 0 and not(contains(substring-after(normalize-space(dcv:arrayshape),' '),' '))]" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <xsl:variable name="nrows"><xsl:value-of select="number(substring-before(normalize-space(dcv:arrayshape),' '))"/></xsl:variable>
   <xsl:variable name="ncols"><xsl:value-of select="number(substring-after(normalize-space(dcv:arrayshape),' '))"/></xsl:variable>
   <xsl:variable name="numelements"><xsl:value-of select="$nrows * $ncols"/></xsl:variable>
@@ -170,7 +170,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 
 
 <!-- match array class that has a shape with exactly one element  -->
-<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='array' and not(contains(normalize-space(dcv:arrayshape),' '))]">
+<xsl:template mode="displaydcvalueclass" match="*[@dcv:valueclass='array' and not(contains(normalize-space(dcv:arrayshape),' '))]" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <xsl:variable name="ncols"><xsl:value-of select="number(normalize-space(dcv:arrayshape))"/></xsl:variable>
   <xsl:choose><xsl:when test="$ncols &gt; 100">
     <!-- Large array: just show size -->
@@ -189,7 +189,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 
 
 
-<xsl:template mode="displaydcvalueclass" match="*">
+<xsl:template mode="displaydcvalueclass" match="*" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <!-- fall-through for unknown dc_value classes -->
   <xsl:value-of select="."/>
 
@@ -203,7 +203,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
      or define namespace prefixes
 -->
 
-<xsl:template match="*" mode="serializexmltree">
+<xsl:template match="*" mode="serializexmltree" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <xsl:choose><xsl:when test="node()"> <!-- contains subnodes -->
     &lt;<xsl:value-of select="name()"/>
     <xsl:apply-templates select="@*" mode="serializexmltree"/>
@@ -217,12 +217,12 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
   </xsl:otherwise></xsl:choose>
 </xsl:template>
 
-<xsl:template match="@*" mode="serializexmltree">
+<xsl:template match="@*" mode="serializexmltree" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <xsl:text> </xsl:text>
   <xsl:value-of select="name()"/>="<xsl:value-of select="."/>"
 </xsl:template>
 
-<xsl:template match="text()|comment()" mode="serializexmltree">
+<xsl:template match="text()|comment()" mode="serializexmltree" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <xsl:value-of select="."/>
 </xsl:template>
 
@@ -231,7 +231,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
      parts of excitationparams
 -->
 
-<xsl:template match="dcv:*" mode="excitationparams">
+<xsl:template match="dcv:*" mode="excitationparams" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <tr class="dcvalue dcv_excitationparams">
     <th class="dcvalue dcv_excitationparams">
       <xsl:choose><xsl:when test="@dc:label">
@@ -251,7 +251,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 <!-- templates with mode="dcv_photos" are for representing
      parts of a photosvalue
 -->
-<xsl:template mode="dcv_photos" match="*">
+<xsl:template mode="dcv_photos" match="*" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <table class="dcvalue dcv_photos">
     <tr class="dcvalue dcv_photos">
       <td class="dcvalue dcv_photos">
@@ -270,7 +270,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 
 
 <!-- Templates for displaying datacollect arrays/matrices -->
-<xsl:template name="show_dcv_matrix_rows">
+<xsl:template name="show_dcv_matrix_rows" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <!-- WARNING: arraydata parameter should be normalized-space with exactly one trailing space added -->
   <xsl:param name="nrows"/>
   <xsl:param name="ncols"/>
@@ -308,7 +308,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 </xsl:template>
 
 <!-- Extract next row of dcvalue matrix as a string -->
-<xsl:template name="dcv_matrix_extract_next_row">
+<xsl:template name="dcv_matrix_extract_next_row" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <!-- WARNING: arraydata parameter should be normalized-space with exactly one trailing space added -->
   <xsl:param name="ncols"/>
   <xsl:param name="arraydata"/>
@@ -326,7 +326,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 
 
 <!-- Extract following rows of dcvalue matrix as a string -->
-<xsl:template name="dcv_matrix_extract_following_rows">
+<xsl:template name="dcv_matrix_extract_following_rows" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <!-- WARNING: arraydata parameter should be normalized-space with exactly one trailing space added -->
   <xsl:param name="ncols"/>
   <xsl:param name="arraydata"/>
@@ -343,7 +343,7 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
   </xsl:otherwise></xsl:choose>
 </xsl:template>
 
-<xsl:template name="show_dcv_vector_row">
+<xsl:template name="show_dcv_vector_row" xmlns:dcv="http://limatix.org/dcvalue" xmlns:dc="http://limatix.org/datacollect" xmlns:chx="http://limatix.org/checklist">
   <!-- WARNING: arraydata parameter should be normalized-space with exactly one trailing space added -->
   <xsl:param name="ncols"/>
   <xsl:param name="arraydata"/>
