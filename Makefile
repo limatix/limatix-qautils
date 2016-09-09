@@ -75,7 +75,7 @@ dist:
 
 	tar $(PUBEXCLUDE) -cvzf /tmp/realclean-limatix-qautils-pub-`cat VERSION`.tar.gz $(DIST_FILES)
 
-	@for archive in  limatix-qautils`cat VERSION` limatix-qautils-pub-`cat VERSION`  ; do mkdir /tmp/$$archive ; tar -C /tmp/$$archive  -x -f /tmp/realclean-$$archive.tar.gz ; make -C /tmp/$$archive all ; make -C /tmp/$$archive distclean ; tar -C /tmp -c -v -z -f /home/sdh4/research/software/archives/$$archive.tar.gz $$archive ; (cd /tmp; zip -r /home/sdh4/research/software/archives/$$archive.zip $$archive ; done
+	@for archive in  limatix-qautils`cat VERSION` limatix-qautils-pub-`cat VERSION`  ; do mkdir /tmp/$$archive ; tar -C /tmp/$$archive  -x -f /tmp/realclean-$$archive.tar.gz ; make -C /tmp/$$archive all ; make -C /tmp/$$archive distclean ; tar -C /tmp -c -v -z -f /home/sdh4/research/software/archives/$$archive.tar.gz $$archive ; ( cd /tmp; zip -r /home/sdh4/research/software/archives/$$archive.zip $$archive ) ; done
 
 
 
