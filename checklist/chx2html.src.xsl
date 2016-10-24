@@ -722,6 +722,7 @@ var saveAs = saveAs
 
 	  var filenameinput=document.getElementById("filenameinput");
 	  /* force extension to ".chf"/.plf */
+          var oldextension = sourcefilename.substr(sourcefilename.lastIndexOf("."), sourcefilename.length);
 
           if (oldextension==".plx") {
             // Force extension to .plf
