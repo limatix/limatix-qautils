@@ -3,6 +3,9 @@ INSTDIR=$(PREFIX)/limatix-qautils
 INSTALL=install
 SUBDIRS=checklist/
 
+DIST_FILES=.
+PUBEXCLUDE=--exclude .hg 
+
 all:
 	@for i in $(SUBDIRS) ; do if [ -d $$i ] && [ -f $$i/Makefile ] ; then $(MAKE) $(MFLAGS) -C $$i ; fi done
 
@@ -12,6 +15,9 @@ clean:
 	rm -f `find . -name "*.swp"`
 	rm -f `find . -name "*.bak"` 
 	rm -f `find . -name "core.*"`
+
+realclean: clean
+distclean: clean
 
 install: clean
 	$(INSTALL) -d $(PREFIX)/bin
@@ -52,3 +58,28 @@ install: clean
 commit: clean
 	hg addremove
 	hg commit
+
+
+dist:
+	mv VERSION VERSIONtmp
+	sed 's/-[^-]*$$//' <VERSIONtmp >VERSION    # remove trailing -devel
+	date "+%B %d, %Y" >VERSIONDATE
+	rm -f VERSIONtmp
+
+	$(MAKE) $(MFLAGS) commit
+	$(MAKE) $(MFLAGS) all
+	$(MAKE) $(MFLAGS) realclean
+	hg tag -f `cat VERSION`
+
+	tar -cvzf /tmp/realclean-limatix-qautils-`cat VERSION`.tar.gz $(DIST_FILES)
+
+	tar $(PUBEXCLUDE) -cvzf /tmp/realclean-limatix-qautils-pub-`cat VERSION`.tar.gz $(DIST_FILES)
+
+	@for archive in  limatix-qautils-`cat VERSION` limatix-qautils-pub-`cat VERSION`  ; do mkdir /tmp/$$archive ; tar -C /tmp/$$archive  -x -f /tmp/realclean-$$archive.tar.gz ; make -C /tmp/$$archive all ; make -C /tmp/$$archive distclean ; tar -C /tmp -c -v -z -f /home/sdh4/research/software/archives/$$archive.tar.gz $$archive ; ( cd /tmp; zip -r /home/sdh4/research/software/archives/$$archive.zip $$archive ) ; done
+
+
+
+	mv VERSION VERSIONtmp
+	awk -F . '{ print $$1 "." $$2 "." $$3+1 "-devel"}' <VERSIONtmp >VERSION  # increment version number and add trailing-devel
+	rm -f VERSIONtmp
+	rm -f VERSIONDATE
