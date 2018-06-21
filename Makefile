@@ -72,7 +72,7 @@ dist:
 	#	hg tag -f `cat VERSION`
 	git checkout master
 	git merge --no-ff develop
-	git tag -f `cat VERSION` -a -M `cat VERSION`
+	git tag -f `cat VERSION` -a -m `cat VERSION`
 
 	tar -cvzf /tmp/realclean-limatix-qautils-`cat VERSION`.tar.gz $(DIST_FILES)
 
