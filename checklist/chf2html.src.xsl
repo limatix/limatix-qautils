@@ -115,18 +115,34 @@ xsltproc chx2html.xsl myfile.chx > myfile.html
 </xsl:if>
 
 <!-- embed scanned pdf if present-->
-<xsl:if test="string-length(@scannedpdf) &gt; 0">
-  <xsl:element name="object">
-    <xsl:attribute name="data"><xsl:value-of select="@scannedpdf"/><xsl:value-of select="$rawlink_postfix"/></xsl:attribute>
-    <xsl:attribute name="width">100%</xsl:attribute>
-    <xsl:attribute name="height">500</xsl:attribute>
-    <xsl:attribute name="type">application/pdf</xsl:attribute>
-  </xsl:element>
-  <a>
-    <xsl:attribute name="href"><xsl:value-of select="@scannedpdf"/><xsl:value-of select="$rawlink_postfix"/></xsl:attribute>
-    Open PDF of filled checklist
-  </a>
-</xsl:if>
+<xsl:choose>
+  <xsl:when test="string-length(@scannedpdf) &gt; 0">
+    <xsl:element name="object">
+      <xsl:attribute name="data"><xsl:value-of select="@scannedpdf"/><xsl:value-of select="$rawlink_postfix"/></xsl:attribute>
+      <xsl:attribute name="width">100%</xsl:attribute>
+      <xsl:attribute name="height">500</xsl:attribute>
+      <xsl:attribute name="type">application/pdf</xsl:attribute>
+    </xsl:element>
+    <a>
+      <xsl:attribute name="href"><xsl:value-of select="@scannedpdf"/><xsl:value-of select="$rawlink_postfix"/></xsl:attribute>
+      Open PDF of filled checklist
+    </a>
+  </xsl:when>
+  <xsl:otherwise>
+    <xsl:if test="chx:scannedpdf">
+      <xsl:element name="object">
+        <xsl:attribute name="data"><xsl:value-of select="chx:scannedpdf/@xlink:href"/><xsl:value-of select="$rawlink_postfix"/></xsl:attribute>
+        <xsl:attribute name="width">100%</xsl:attribute>
+        <xsl:attribute name="height">500</xsl:attribute>
+        <xsl:attribute name="type">application/pdf</xsl:attribute>
+      </xsl:element>
+      <a>
+        <xsl:attribute name="href"><xsl:value-of select="chx:scannedpdf/@xlink:href"/><xsl:value-of select="$rawlink_postfix"/></xsl:attribute>
+        Open PDF of filled checklist
+      </a>
+    </xsl:if>
+  </xsl:otherwise>
+</xsl:choose>
 
 <table border="1">
 <xsl:apply-templates/>

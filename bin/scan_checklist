@@ -1,5 +1,7 @@
 #! /usr/bin/python
 
+from __future__ import print_function
+
 import os
 import copy
 import re
@@ -10,14 +12,53 @@ import traceback
 import subprocess
 import threading
 import zbar
-import Image
+from PIL import Image
 from lxml import etree
-from StringIO import StringIO
+
+try:
+    from cStringIO import StringIO
+    pass
+except ImportError:
+    from io import StringIO
+    pass
+
+try:
+    # py2.x
+    from urllib import pathname2url
+    from urllib import url2pathname
+    from urllib import quote
+    from urllib import unquote
+    pass
+except ImportError:
+    # py3.x
+    from urllib.request import pathname2url
+    from urllib.request import url2pathname
+    from urllib.parse import quote
+    from urllib.parse import unquote
+    pass
+
+
 
 class logwriter(object):
 
     stdout = None
     log = None
+
+
+    encoding=None
+    closed=False
+    errors=None
+    fileno=None
+    isatty=None
+    mode=None
+    name=None
+    newlines=None
+    seek=None
+    softspace=None
+    tell=None
+    truncate=None
+    readlines=None
+    readline=None
 
     def __init__(self):
         self.stdout = sys.stdout
@@ -28,6 +69,11 @@ class logwriter(object):
         self.stdout.write(s)
         self.log.write(s)
         pass
+
+    def writeline(self,iterable):
+        for entry in iterable:
+            self.write(entry)
+            pass
 
     def flush(self):
         self.stdout.flush()
@@ -45,7 +91,7 @@ class pagehandler(object):
 
     def process_barcodes(self,zbarimg):
         tagdict={}
-        checklist=etree.Element("{http://thermal.cnde.iastate.edu/checklist}checklist",nsmap={ None: "http://thermal.cnde.iastate.edu/checklist", "dc":"http://thermal.cnde.iastate.edu/datacollect", "dcv":"http://thermal.cnde.iastate.edu/dcvalue"})
+        checklist=etree.Element("{http://limatix.org/checklist}checklist",nsmap={ None: "http://limatix.org/checklist", "dc":"http://limatix.org/datacollect", "dcv":"http://limatix.org/dcvalue", "xlink":"http://www.w3.org/1999/xlink"})
 
         for symbol in zbarimg:
             
@@ -55,13 +101,13 @@ class pagehandler(object):
                 # print matchobj
                 if matchobj is not None:
                     # print matchobj.groups()
-                    barcodexml=etree.Element("{http://thermal.cnde.iastate.edu/checklist}"+matchobj.group(1))
+                    barcodexml=etree.Element("{http://limatix.org/checklist}"+matchobj.group(1))
                     barcodexml.text=matchobj.group(2)
                 
                     pass
                 else :
                     # full XML form (wrap temporarily in dummyroot so we can get the xmlns declaration in 
-                    wrappedbarcodexml=etree.XML('<dummyroot xmlns="http://thermal.cnde.iastate.edu/checklist">'+symbol.data+'</dummyroot>')
+                    wrappedbarcodexml=etree.XML('<dummyroot xmlns="http://limatix.org/checklist">'+symbol.data+'</dummyroot>')
                     if len(wrappedbarcodexml) < 1:
                         raise ValueError("No tag in xml data %s" % (symboldata))
                 
@@ -129,19 +175,19 @@ class pagehandler(object):
                 # found a CHX file
                 try :
                     CHX=etree.parse(fname)
-                    clinfo=CHX.find('/chx:clinfo',namespaces={'chx':'http://thermal.cnde.iastate.edu/checklist'})
+                    clinfo=CHX.find('/chx:clinfo',namespaces={'chx':'http://limatix.org/checklist'})
                     if clinfo.text==tagdict["clinfo"]:
                         # Found matching file !!!
-                        desttag=CHX.find('/chx:dest',namespaces={'chx':'http://thermal.cnde.iastate.edu/checklist'})
+                        desttag=CHX.find('/chx:dest',namespaces={'chx':'http://limatix.org/checklist'})
                         if "autofilename" in desttag.attrib:
-                            autofilename=checklist.xpath(desttag.attrib["autofilename"],namespaces={'chx':'http://thermal.cnde.iastate.edu/checklist','dc':'http://thermal.cnde.iastate.edu/datacollect','dcv':'http://thermal.cnde.iastate.edu/dcvalue'})
+                            autofilename=checklist.xpath(desttag.attrib["autofilename"],namespaces={'chx':'http://limatix.org/checklist','dc':'http://limatix.org/datacollect','dcv':'http://limatix.org/dcvalue'})
                             pass
                         
                         break
                     pass
                 except: 
                     (exctype,excvalue)=sys.exc_info()[:2]                    
-                    sys.stderr.write("Error searching for CHX file %s %s\n" % (str(exctype.__name__),str(excvalue)))
+                    sys.stderr.write("Error searching for CHX file %s %s looking in %s\n" % (str(exctype.__name__),str(excvalue),fname))
                     traceback.print_exc()
                     pass
                 pass
@@ -221,6 +267,9 @@ class pagehandler(object):
             self.missedpages.append(name)
             return
 
+        #import pdb
+        #pdb.set_trace()
+
         (pagenumstr,numpagesstr)=tagdict["page"].split("/")
         pagenum=int(pagenumstr)
         numpages=int(numpagesstr)
@@ -243,7 +292,7 @@ class pagehandler(object):
 
         self.pastpages.append((name,tagdict,checklist,pagenum,numpages))
         
-        print "page %d/%d" % (pagenum,numpages)
+        print("page %d/%d" % (pagenum,numpages))
         
 
         if pagenum==numpages: 
@@ -252,7 +301,7 @@ class pagehandler(object):
 
             try : 
                 pdflist=[]
-                checklist=etree.Element("{http://thermal.cnde.iastate.edu/checklist}checklist",nsmap={ None: "http://thermal.cnde.iastate.edu/checklist", "dc":"http://thermal.cnde.iastate.edu/datacollect", "dcv":"http://thermal.cnde.iastate.edu/dcvalue"})
+                checklist=etree.Element("{http://limatix.org/checklist}checklist",nsmap={ None: "http://limatix.org/checklist", "dc":"http://limatix.org/datacollect", "dcv":"http://limatix.org/dcvalue", "xlink":"http://www.w3.org/1999/xlink"})
                 checkdoc=etree.ElementTree(checklist)
                 checklist.addprevious(etree.ProcessingInstruction("xml-stylesheet",'type="text/xsl" href="chf2html.xsl"'))
                 tagdict={}
@@ -261,10 +310,10 @@ class pagehandler(object):
                     tagdict.update(pasttagdict)
                 
                     for barcodexml in pastchecklist:
-                        if barcodexml.tag == '{http://thermal.cnde.iastate.edu/checklist}allchecked':
+                        if barcodexml.tag == '{http://limatix.org/checklist}allchecked':
                             checklist.attrib["allchecked"]='true' # set attribute and ignore tag
                             pass
-                        elif barcodexml.tag == '{http://thermal.cnde.iastate.edu/checklist}page':
+                        elif barcodexml.tag == '{http://limatix.org/checklist}page':
                             # page tags are unnecessary
                             pass
                         elif checklist.find(barcodexml.tag) is None:
@@ -294,16 +343,21 @@ class pagehandler(object):
                     (outfullname,outpdfname)=self.defaultfilename(tagdict,dest)
                     pass
 
-                checkdoc.getroot().attrib["scannedpdf"]=os.path.split(outpdfname)[1]
+                
+                #checkdoc.getroot().attrib["scannedpdf"]=os.path.split(outpdfname)[1]
+                scannedpdf=etree.Element("{http://limatix.org/checklist}scannedpdf",nsmap={ None: "http://limatix.org/checklist", "dc":"http://limatix.org/datacollect", "dcv":"http://limatix.org/dcvalue","xlink": "http://www.w3.org/1999/xlink"})
+                scannedpdf.attrib["{http://www.w3.org/1999/xlink}href"]=quote(os.path.split(outpdfname)[1])
+                scannedpdf.attrib["{http://www.w3.org/1999/xlink}type"]="simple"
+                checklist.append(scannedpdf)
             
-                print "Writing %s and %s..." % (os.path.join(dest,outfullname),os.path.join(dest,outpdfname)), 
+                print("Writing %s and %s..." % (os.path.join(dest,outfullname),os.path.join(dest,outpdfname)),end='') 
 
                 # write PDF
                 self.generatepdf(pdflist,os.path.join(dest,outpdfname))
                 # Write XML CHF
                 checkdoc.write(os.path.join(dest,outfullname),pretty_print=True,encoding='utf-8')
 
-                print "done."
+                print("done.")
 
                 self.pastpages=[] # reset
             
@@ -362,9 +416,9 @@ class pagehandler(object):
                 log = open(logfilename, 'w')
                 log.write(sys.stdout.log.getvalue())
                 log.close()
-                print "Log file %s written" % logfilename
+                print("Log file %s written" % (logfilename))
             except:
-                print "Failed Writing Logfile"
+                print("Failed Writing Logfile")
                 pass
             self.generatepdf(self.missedpages,filename)
             self.missedpages=[]
@@ -406,7 +460,15 @@ newenviron=copy.deepcopy(os.environ)
 
 newenviron["SCAN_DATABROWSE_PIPE_WRITE"]=str(pipe_write)
 
-subp=subprocess.Popen(['/usr/bin/scanadf','-d','fujitsu:ScanSnap S1500:386246','--resolution','400','--mode','Gray','--scan-script','/usr/local/bin/sdb_gotimage','--script-wait','-o','image-%04d.pgm'])
+if len(sys.argv) >= 2 and sys.argv[1]=="--duplex":
+    subp=subprocess.Popen(['/usr/bin/scanadf','-d','fujitsu:ScanSnap S1500:386246','--source','ADF Duplex','--resolution','400','--mode','Gray','--scan-script','/usr/local/bin/sdb_gotimage','--script-wait','-o','image-%04d.pgm'])
+    
+    pass
+else:
+
+    subp=subprocess.Popen(['/usr/bin/scanadf','-d','fujitsu:ScanSnap S1500:386246','--resolution','400','--mode','Gray','--scan-script','/usr/local/bin/sdb_gotimage','--script-wait','-o','image-%04d.pgm'])
+    pass
+
 
 skulker=threading.Thread(target=skulker_code,args=(subp,))
 skulker.start()
@@ -419,11 +481,11 @@ while line != 'die\n':
     imgname=matchobj.group(1)
     
     pil=Image.open(imgname).convert('L')
-    image=zbar.Image(pil.size[0],pil.size[1],'Y800',pil.tostring())
+    image=zbar.Image(pil.size[0],pil.size[1],'Y800',pil.tobytes())
     scanner.scan(image)
 
     for symbol in image:
-        print 'decoded', symbol.type, 'symbol', '"%s"' % symbol.data
+        print('decoded', symbol.type, 'symbol', '"%s"' % (symbol.data))
         pass
 
     pageh.handlepage(imgname,image)

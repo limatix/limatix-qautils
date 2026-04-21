@@ -1,0 +1,11 @@
+--- auto-pst-pdf.sty.orig	2018-10-25 23:12:13.069734588 -0500
++++ auto-pst-pdf.sty	2018-10-25 23:12:34.973084110 -0500
+@@ -89,6 +89,8 @@
+      \app@convert{extralatex}{\jobname.\app@ext}{\app@jobname.dvi}%
+      \advance\c@app@runs\m@ne
+   \repeat
++  \app@convert{extralatex}{\jobname.\app@ext}{\app@jobname.dvi}%
++  \app@convert{extralatex}{\jobname.\app@ext}{\app@jobname.dvi}%
+   \app@convert{latex}{\jobname.\app@ext}{\app@jobname.dvi}%
+   \app@convert{dvips}{\app@jobname.dvi}{\app@jobname.ps}%
+   \if@app@crop@

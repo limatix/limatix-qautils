@@ -6,7 +6,7 @@ command:
 
   -->
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:chx="http://limatix.org/checklist" version="1.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:chx="http://limatix.org/checklist" xmlns:html="http://www.w3.org/1999/xhtml" version="1.0">
 <xsl:output method="xml"/>
 
 <xsl:param name="specimen"/>
@@ -44,36 +44,36 @@ command:
 
 </xsl:template>
 
-<xsl:template match="chx:i" mode="descrmarkup">
+<xsl:template match="chx:i|html:i|i" mode="descrmarkup">
 <group><cmd name="em"/><xsl:apply-templates mode="descrmarkup"/></group>
 </xsl:template>
 
-<xsl:template match="chx:b" mode="descrmarkup">
+<xsl:template match="chx:b|html:b|b" mode="descrmarkup">
 <group><cmd name="bf"/><xsl:apply-templates mode="descrmarkup"/></group>
 </xsl:template>
 
-<xsl:template match="chx:sub" mode="descrmarkup">
+<xsl:template match="chx:sub|html:sub|sub" mode="descrmarkup">
 <math><ctrl ch=" "/><spec cat="sub"/><group><cmd name="mbox"><parm><cmd name="tiny"/><xsl:apply-templates mode="descrmarkup"/></parm></cmd></group></math>
 </xsl:template>
 
-<xsl:template match="chx:sup" mode="descrmarkup">
+<xsl:template match="chx:sup|html:sup|sup" mode="descrmarkup">
 <math><ctrl ch=" "/><spec cat="sup"/><group><cmd name="mbox"><parm><cmd name="tiny"/><xsl:apply-templates mode="descrmarkup"/></parm></cmd></group></math>
 </xsl:template>
 
-<xsl:template match="chx:tt" mode="descrmarkup">
+<xsl:template match="chx:tt|html:tt|tt" mode="descrmarkup">
 <group><cmd name="tt"/><xsl:apply-templates mode="descrmarkup"/></group>
 </xsl:template>
 
-<xsl:template match="chx:s" mode="descrmarkup">
+<xsl:template match="chx:s|html:s|s" mode="descrmarkup">
 <cmd name="sout"><parm><xsl:apply-templates mode="descrmarkup"/></parm></cmd>
 </xsl:template>
 
 
-<xsl:template match="chx:u" mode="descrmarkup">
+<xsl:template match="chx:u|html:u|u" mode="descrmarkup">
 <cmd name="underline"><parm><xsl:apply-templates mode="descrmarkup"/></parm></cmd>
 </xsl:template>
 
-<xsl:template match="chx:br" mode="descrmarkup">
+<xsl:template match="chx:br|html:br|br" mode="descrmarkup">
 <spec cat="tilde"/><ctrl ch="\"/>
 </xsl:template>
 

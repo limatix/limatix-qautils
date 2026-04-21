@@ -41,6 +41,7 @@ install: clean
 	
 	cp -a bin $(INSTDIR)/bin
 	cp -a latex $(INSTDIR)/latex
+	(cd $(INSTDIR)/latex/tex/latex/local/external; cp auto-pst-pdf.sty.orig auto-pst-pdf.sty; patch -p0 <auto-pst-pdf.patch)
 	cp -a lib $(INSTDIR)/lib
 	cp -a checklist $(INSTDIR)/checklist
 

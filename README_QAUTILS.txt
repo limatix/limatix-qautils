@@ -27,11 +27,22 @@ examples/QAoverall.tex  Example QA statement. Can be processed
                    with bin/QAstatement2pdf
 bin/chx2pdf        Converts checklists to printable .pdf files
                    with barcodes
+		   Requires packages: 
+                      texlive (or another LaTeX distribution
+		      texml
+                   Also requires the following LaTeX packages:
+                      texlive-lastpage, texlive-auto-pst-pdf, 
+                      tex-preview, texlive-ifmtarg, texlive-textpos
+                      texlive-pdfcrop, texlive-pdfcrop-bin
+                      texlive-seqsplit, texlive-pst-barcode
 bin/printQRcode    Print QR barcode to label printer
 bin/QAstatement2pdf  Convert "QA statement" written in LaTeX to 
                      printable .pdf and series of checklists
 bin/scan_checklist   Tool for scanning printed checklists and
                      interpreting their barcodes
+                     Requires "zbar" barcode interpreter package
+                     and SANE (scanner access now easy) scanner 
+                     library and netpbm package
 bin/sdb_gotimage   Helper for bin/scan_checklist that handles
                    scanned images as they are received
 		   
