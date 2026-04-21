@@ -460,7 +460,15 @@ newenviron=copy.deepcopy(os.environ)
 
 newenviron["SCAN_DATABROWSE_PIPE_WRITE"]=str(pipe_write)
 
-subp=subprocess.Popen(['/usr/bin/scanadf','-d','fujitsu:ScanSnap S1500:386246','--resolution','400','--mode','Gray','--scan-script','/usr/local/bin/sdb_gotimage','--script-wait','-o','image-%04d.pgm'])
+if len(sys.argv) >= 2 and sys.argv[1]=="--duplex":
+    subp=subprocess.Popen(['/usr/bin/scanadf','-d','fujitsu:ScanSnap S1500:386246','--source','ADF Duplex','--resolution','400','--mode','Gray','--scan-script','/usr/local/bin/sdb_gotimage','--script-wait','-o','image-%04d.pgm'])
+    
+    pass
+else:
+
+    subp=subprocess.Popen(['/usr/bin/scanadf','-d','fujitsu:ScanSnap S1500:386246','--resolution','400','--mode','Gray','--scan-script','/usr/local/bin/sdb_gotimage','--script-wait','-o','image-%04d.pgm'])
+    pass
+
 
 skulker=threading.Thread(target=skulker_code,args=(subp,))
 skulker.start()
